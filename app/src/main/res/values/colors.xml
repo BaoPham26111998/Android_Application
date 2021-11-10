@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Set up main colors for the application-->
+<resources>
+    <color name="main_color">#b38cff</color>
+    <color name="main_darker_color">#7151c0</color>
+    <color name="text1_color">#212121</color>
+    <color name="text2_color">#757575</color>
+    <color name="input_color">#ECECEC</color>
+    <color name="icon_color">#20FFFFFF</color>
+    <color name="white">#FFFFFF</color>
+    <color name="error_color">#B00020</color>
+    <color name="receive_color">#693036</color>
+
+
+</resources>
