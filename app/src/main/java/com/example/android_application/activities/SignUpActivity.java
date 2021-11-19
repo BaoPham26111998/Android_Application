@@ -17,7 +17,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.android_application.databinding.ActivitySignUpBinding;
 import com.example.android_application.ultilities.Constants;
-import com.example.android_application.ultilities.PasswordEncryptor;
 import com.example.android_application.ultilities.PreferenceManager;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -32,7 +31,6 @@ public class SignUpActivity extends AppCompatActivity {
     private ActivitySignUpBinding binding;
     private PreferenceManager preferenceManager;
     private String encodedImage;
-    private PasswordEncryptor pE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +79,7 @@ public class SignUpActivity extends AppCompatActivity {
         HashMap<String, Object> user = new HashMap<>();
         user.put(Constants.NAME,binding.inputName.getText().toString());
         user.put(Constants.EMAIL,binding.inputEmail.getText().toString());
-        user.put(Constants.PASSWORD, pE.toHexString(PasswordEncryptor.getSHA(binding.inputPassword.getText().toString())));
+        user.put(Constants.PASSWORD,binding.inputPassword.getText().toString());
         user.put(Constants.IMAGE,encodedImage);
 
         //Add input data to firestore collection
