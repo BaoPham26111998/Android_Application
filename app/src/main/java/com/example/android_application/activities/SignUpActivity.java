@@ -17,12 +17,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.android_application.databinding.ActivitySignUpBinding;
 import com.example.android_application.ultilities.Constants;
+import com.example.android_application.ultilities.PasswordEncryptor;
 import com.example.android_application.ultilities.PreferenceManager;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 
 public class SignUpActivity extends AppCompatActivity {
@@ -30,6 +32,7 @@ public class SignUpActivity extends AppCompatActivity {
     private ActivitySignUpBinding binding;
     private PreferenceManager preferenceManager;
     private String encodedImage;
+    private PasswordEncryptor pE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +51,11 @@ public class SignUpActivity extends AppCompatActivity {
         // Trigger the signup function when click on signup button
         binding.buttonSignUp.setOnClickListener(v -> {
             if (invalidSignUpDetail()){
-                signUp();
+                try {
+                    signUp();
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                }
             }
         });
         // Redirect from application to devices image media folder to choose avatar when user clickon the avatar frame
@@ -66,7 +73,7 @@ public class SignUpActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 
-    private void signUp(){
+    private void signUp() throws NoSuchAlgorithmException {
         loading(true);
         // Call Firebase firestore function
         FirebaseFirestore database = FirebaseFirestore.getInstance();
@@ -74,7 +81,7 @@ public class SignUpActivity extends AppCompatActivity {
         HashMap<String, Object> user = new HashMap<>();
         user.put(Constants.NAME,binding.inputName.getText().toString());
         user.put(Constants.EMAIL,binding.inputEmail.getText().toString());
-        user.put(Constants.PASSWORD,binding.inputPassword.getText().toString());
+        user.put(Constants.PASSWORD, pE.toHexString(PasswordEncryptor.getSHA(binding.inputPassword.getText().toString())));
         user.put(Constants.IMAGE,encodedImage);
 
         //Add input data to firestore collection
