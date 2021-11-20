@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.android_application.databinding.ActivityMainBinding;
 import com.example.android_application.ultilities.Constants;
 import com.example.android_application.ultilities.PreferenceManager;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -42,8 +43,10 @@ public class MainActivity extends AppCompatActivity {
     private void setListeners(){
         //log out by click in to the icon on the top right corner
         binding.imageSignOut.setOnClickListener(v -> logOut());
-//        binding.fabNewChat.setOnClickListener(v ->
-//                startActivity(new Intent(getApplicationContext(), UsersAcitivity.class)));
+        binding.fabNewPost.setOnClickListener(v ->
+                startActivity(new Intent(getApplicationContext(), CreatePost.class)));
+        binding.imageProfile.setOnClickListener(v ->
+                startActivity(new Intent(getApplicationContext(), AccountProfileActivity.class)));
     }
 
     // load user info in the application
@@ -72,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
                 database.collection(Constants.COLLECTION_USERS).document(
                         preferenceManager.getString(Constants.USER_ID)
                 );
+//        showToast(preferenceManager.getString(Constants.USER_ID));
         documentReference.update(Constants.FCM_TOKEN, token)
                 //.addOnSuccessListener(unused -> showToast("Token updated successfully"))
                 .addOnFailureListener(e -> showToast("Unable to get Token"));
@@ -85,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
                 database.collection(Constants.COLLECTION_USERS).document(
                         preferenceManager.getString(Constants.USER_ID)
                 );
+        FirebaseAuth.getInstance().signOut();
         HashMap<String, Object> updates = new HashMap<>();
         //delete the token after user logout on the database
         updates.put(Constants.FCM_TOKEN, FieldValue.delete());

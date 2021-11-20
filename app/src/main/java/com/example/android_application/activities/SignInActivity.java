@@ -20,7 +20,6 @@ public class SignInActivity extends AppCompatActivity {
     private ActivitySigninBinding binding;
     private PreferenceManager preferenceManager;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,7 +28,9 @@ public class SignInActivity extends AppCompatActivity {
         preferenceManager = new PreferenceManager(getApplicationContext());
         setContentView(binding.getRoot());
         setListeners();
+
     }
+
 
     private void setListeners(){
         //Go to sign up screen when user click on the sign button
@@ -41,10 +42,9 @@ public class SignInActivity extends AppCompatActivity {
                 signIn();
             }
         });
-        // for testing dummy data in the database un-comment this line and firestoreDummyData() function below
-        //binding.buttonSignIn.setOnClickListener(v -> firestoreDummyData());
-
     }
+
+
     //Set up loading animation
     private void loading(Boolean isloading){
         if(isloading){
@@ -64,7 +64,7 @@ public class SignInActivity extends AppCompatActivity {
         FirebaseFirestore database = FirebaseFirestore.getInstance();
         //Get data from users collection database and check the login condition
         database.collection(Constants.COLLECTION_USERS)
-                //Compare input information and information from the firestore to check if the user is legit to loggin
+                //Compare input information and information from the firestore to check if the user is legit to log in
                 .whereEqualTo(Constants.EMAIL, binding.inputEmail.getText().toString())
                 .whereEqualTo(Constants.PASSWORD, binding.inputPassword.getText().toString())
                 .get()
@@ -83,10 +83,13 @@ public class SignInActivity extends AppCompatActivity {
                         startActivity(intent);
                     } else {
                         loading(false);
-                        showToast("Unable to sign in");
+                        showToast("Invalid Email Password");
                     }
                 });
     }
+
+
+
 
     // Set up the application notification for UI
     private void showToast(String message) {
@@ -108,21 +111,4 @@ public class SignInActivity extends AppCompatActivity {
             return true;
         }
     }
-
-    // Add dummy data to firestore database to test connection between device and firestore
-//    private void firestoreDummyData(){
-//        FirebaseFirestore database = FirebaseFirestore.getInstance();
-//        HashMap<String, Object> data = new HashMap<>();
-//
-//        data.put("first_name", "bao");
-//        data.put("last_name", "pham");
-//        database.collection("users")
-//                .add(data)
-//                .addOnSuccessListener(documentReference -> {
-//                    Toast.makeText(getApplicationContext(), "Data successfully inserted", Toast.LENGTH_SHORT).show();
-//                })
-//                .addOnFailureListener(exception -> {
-//                    Toast.makeText(getApplicationContext(), exception.getMessage(),Toast.LENGTH_SHORT).show();
-//                });
-//    }
 }
