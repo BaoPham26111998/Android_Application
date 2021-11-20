@@ -28,4 +28,9 @@ public class Constants {
     public static final String RECEIVER_ID= "receiverId";
     public static final String MESSAGE = "message";
     public static final String TIMESTAMP = "timestamp";
+
+    public static final String ARRAY_POST = "arrayPost";
+    public static final String POST_TITLE= "postTitle";
+    public static final String POST_DESCRIPTION = "postDescription";
+    public static final String POST_IMAGE = "postImage";
 }
