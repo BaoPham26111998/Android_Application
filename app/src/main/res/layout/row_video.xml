@@ -38,6 +38,23 @@
         android:textSize="20dp"
         android:text="dd//MM/yyyy hh:mm"></TextView>
 
+    <TextView
+        android:id="@+id/creatorTv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignBaseline="@+id/titleTv"
+        android:layout_marginStart="120dp"
+        android:layout_marginEnd="30dp"
+        android:text="Creator"
+        android:shadowColor="@color/black"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="2"
+        android:textColor="@color/white"
+        android:textSize="20dp"
+        />
+
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="match_parent"

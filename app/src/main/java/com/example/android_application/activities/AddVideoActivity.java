@@ -26,11 +26,15 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.android_application.R;
+import com.example.android_application.databinding.ActivityAddVideoBinding;
+import com.example.android_application.ultilities.Constants;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
@@ -49,7 +53,11 @@ public class AddVideoActivity extends AppCompatActivity {
     VideoView videoView;
     Button uploadButton;
     FloatingActionButton pickVidFab;
+
     FirebaseFirestore db;
+    FirebaseAuth mAuth;
+
+//    ActivityAddVideoBinding binding;
 
     public static int VIDEO_PICK_GALLERY_CODE = 100;
     public static int VIDEO_PICK_CAMERA_CODE = 101;
@@ -84,6 +92,8 @@ public class AddVideoActivity extends AppCompatActivity {
             Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE
         };
 
+        mAuth = FirebaseAuth.getInstance();
+
         uploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -112,6 +122,9 @@ public class AddVideoActivity extends AppCompatActivity {
     private void uploadToFirebase(){
         progressDialog.show();
 
+        FirebaseUser firebaseUser = mAuth.getCurrentUser();
+        String uUid = firebaseUser.getUid();
+
         String timestamp = "" + System.currentTimeMillis();
 
         String firePathAndName = "Videos/" + "video" + timestamp;
@@ -129,12 +142,13 @@ public class AddVideoActivity extends AppCompatActivity {
                             //receive video uploaded url
 
                             HashMap<String, Object> hashMap = new HashMap<>();
-                            hashMap.put("id", ""+timestamp);
-                            hashMap.put("title", ""+title);
-                            hashMap.put("timestamp", ""+timestamp);
-                            hashMap.put("videoUrl", "" + downloadUri);
+                            hashMap.put(Constants.VIDEO_ID, "" + timestamp + Double.toString(Math.random()*100));
+                            hashMap.put(Constants.VIDEO_TITLE, "" + title);
+                            hashMap.put(Constants.VIDEO_TIMESTAMP, "" + timestamp);
+                            hashMap.put(Constants.VIDEO_URL, "" + downloadUri);
+                            hashMap.put(Constants.VIDEO_CREATOR, "" + uUid);
 
-                            // Add to firestore
+                            // Add Video Data to firestore
                             db.collection("videos")
                                     .add(hashMap)
                                     .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {

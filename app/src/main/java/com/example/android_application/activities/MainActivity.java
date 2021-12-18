@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.android_application.databinding.ActivityMainBinding;
 import com.example.android_application.models.Video;
-import com.example.android_application.ultilities.AdapterVideo;
+import com.example.android_application.adapters.AdapterVideo;
 import com.example.android_application.ultilities.Constants;
 import com.example.android_application.ultilities.PreferenceManager;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -124,14 +124,15 @@ public class MainActivity extends AppCompatActivity {
                             for (QueryDocumentSnapshot documentSnapshots : task.getResult()){
                                 Video video = new Video();
                                 Map<String, Object> videoData = documentSnapshots.getData();
-                                video.setId(videoData.get("id").toString());
-                                video.setVideoUrl(videoData.get("videoUrl").toString());
-                                video.setTitle(videoData.get("title").toString());
-                                video.setTimestamp(videoData.get("timestamp").toString());
+                                video.setId(videoData.get(Constants.VIDEO_ID).toString());
+                                video.setVideoUrl(videoData.get(Constants.VIDEO_URL).toString());
+                                video.setTitle(videoData.get(Constants.VIDEO_TITLE).toString());
+                                video.setTimestamp(videoData.get(Constants.VIDEO_TIMESTAMP).toString());
+                                video.setUser(videoData.get(Constants.VIDEO_CREATOR).toString());
 
                                 videoArrayList.add(video);
                             }
-                            adapterVideo = new AdapterVideo(MainActivity.this, videoArrayList);
+                            adapterVideo = new AdapterVideo(MainActivity.this, videoArrayList, preferenceManager.getString(Constants.NAME));
                             recyclerView.setAdapter(adapterVideo);
                         } else{
                             Toast.makeText(MainActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();

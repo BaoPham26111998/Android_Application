@@ -33,4 +33,12 @@ public class Constants {
     public static final String POST_TITLE= "postTitle";
     public static final String POST_DESCRIPTION = "postDescription";
     public static final String POST_IMAGE = "postImage";
+
+    //Videos Info
+    public static final String VIDEO_ID = "id";
+    public static final String VIDEO_TITLE = "title";
+    public static final String VIDEO_URL = "videoUrl";
+    public static final String VIDEO_TIMESTAMP = "timestamp";
+    public static final String VIDEO_CREATOR = "user";
+
 }

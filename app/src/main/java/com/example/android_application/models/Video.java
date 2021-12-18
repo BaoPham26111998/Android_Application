@@ -1,16 +1,28 @@
 package com.example.android_application.models;
 
 
-public class Video {
-    String id, title, timestamp, videoUrl;
+import java.io.Serializable;
+
+public class Video implements Serializable {
+    String id, title, timestamp, videoUrl, user;
 
     public Video(){}
 
-    public Video(String id, String title, String timestamp, String videoUrl) {
+    public Video(String id, String title, String timestamp, String videoUrl, String user) {
         this.id = id;
         this.title = title;
         this.timestamp = timestamp;
         this.videoUrl = videoUrl;
+        this.user = user;
+    }
+
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
     }
 
     public String getId() {

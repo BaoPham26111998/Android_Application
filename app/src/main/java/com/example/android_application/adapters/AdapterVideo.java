@@ -1,4 +1,4 @@
-package com.example.android_application.ultilities;
+package com.example.android_application.adapters;
 
 import android.content.Context;
 import android.media.MediaPlayer;
@@ -25,10 +25,12 @@ public class AdapterVideo extends RecyclerView.Adapter<AdapterVideo.HolderView> 
 
     private Context context;
     private ArrayList<Video> videoArrayList;
+    private String username;
 
-    public AdapterVideo(Context context, ArrayList<Video> videoArrayList) {
+    public AdapterVideo(Context context, ArrayList<Video> videoArrayList, String username) {
         this.context = context;
         this.videoArrayList = videoArrayList;
+        this.username = username;
     }
 
     @NonNull
@@ -47,6 +49,7 @@ public class AdapterVideo extends RecyclerView.Adapter<AdapterVideo.HolderView> 
         String title = video.getTitle();
         String timestamp = video.getTimestamp();
         String videoUrl = video.getVideoUrl();
+        String userId = video.getUser();
 
         // Format timestamp
         Calendar calender = Calendar.getInstance();
@@ -56,6 +59,8 @@ public class AdapterVideo extends RecyclerView.Adapter<AdapterVideo.HolderView> 
         // set Data
         holder.title.setText(title);
         holder.timeTv.setText(formattedDateTime);
+        holder.timeTv.setText("Creator " + username);
+
 
         setVideoUrl(video, holder);
 
@@ -119,7 +124,7 @@ public class AdapterVideo extends RecyclerView.Adapter<AdapterVideo.HolderView> 
     class HolderView extends RecyclerView.ViewHolder{
 
         VideoView videoView;
-        TextView title, timeTv;
+        TextView title, timeTv, creatorTv;
         ProgressBar progressBar;
 
         public HolderView(@NonNull View itemView) {
@@ -128,6 +133,7 @@ public class AdapterVideo extends RecyclerView.Adapter<AdapterVideo.HolderView> 
             videoView = itemView.findViewById(R.id.videoView);
             title = itemView.findViewById(R.id.titleTv);;
             timeTv = itemView.findViewById(R.id.timeTv);
+            creatorTv = itemView.findViewById(R.id.creatorTv);
             progressBar = itemView.findViewById(R.id.progressBar);
         }
     }
