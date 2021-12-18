@@ -26,12 +26,15 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.android_application.R;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -46,6 +49,7 @@ public class AddVideoActivity extends AppCompatActivity {
     VideoView videoView;
     Button uploadButton;
     FloatingActionButton pickVidFab;
+    FirebaseFirestore db;
 
     public static int VIDEO_PICK_GALLERY_CODE = 100;
     public static int VIDEO_PICK_CAMERA_CODE = 101;
@@ -60,6 +64,7 @@ public class AddVideoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_video);
 
+        db = FirebaseFirestore.getInstance();
         actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -67,7 +72,7 @@ public class AddVideoActivity extends AppCompatActivity {
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("Please Wait");
-        progressDialog.setMessage("Fucking Children");
+        progressDialog.setMessage("Uploading Video...");
         progressDialog.setCanceledOnTouchOutside(false);
 
         editText = (EditText) findViewById(R.id.editTitle);
@@ -127,26 +132,43 @@ public class AddVideoActivity extends AppCompatActivity {
                             hashMap.put("id", ""+timestamp);
                             hashMap.put("title", ""+title);
                             hashMap.put("timestamp", ""+timestamp);
-                            hashMap.put("videoUrl", ""+downloadUri);
+                            hashMap.put("videoUrl", "" + downloadUri);
 
-                            DatabaseReference databaseReference = FirebaseDatabase.getInstance("https://gacha-17df9-default-rtdb.asia-southeast1.firebasedatabase.app").getReference("Videos");
-                            databaseReference.child(timestamp)
-                                    .setValue(hashMap)
-                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            // Add to firestore
+                            db.collection("videos")
+                                    .add(hashMap)
+                                    .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                                         @Override
-                                        public void onSuccess(Void unused) {
-                                            progressDialog.dismiss();
-                                            Toast.makeText(AddVideoActivity.this, "Video uploaded", Toast.LENGTH_SHORT).show();
-
+                                        public void onComplete(@NonNull Task<DocumentReference> task) {
+                                            Toast.makeText(AddVideoActivity.this, "Successfully added to Firestore", Toast.LENGTH_SHORT).show();
                                         }
                                     })
                                     .addOnFailureListener(new OnFailureListener() {
                                         @Override
                                         public void onFailure(@NonNull Exception e) {
-                                            progressDialog.dismiss();
-                                            Toast.makeText(AddVideoActivity.this, "You are a mistake", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(AddVideoActivity.this, "Failed", Toast.LENGTH_SHORT).show();
                                         }
                                     });
+
+//                              Add to realtime db
+//                            DatabaseReference databaseReference = FirebaseDatabase.getInstance("https://gacha-17df9-default-rtdb.asia-southeast1.firebasedatabase.app").getReference("Videos");
+//                            databaseReference.child(timestamp)
+//                                    .setValue(hashMap)
+//                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                        @Override
+//                                        public void onSuccess(Void unused) {
+//                                            progressDialog.dismiss();
+//                                            Toast.makeText(AddVideoActivity.this, "Video uploaded", Toast.LENGTH_SHORT).show();
+//
+//                                        }
+//                                    })
+//                                    .addOnFailureListener(new OnFailureListener() {
+//                                        @Override
+//                                        public void onFailure(@NonNull Exception e) {
+//                                            progressDialog.dismiss();
+//                                            Toast.makeText(AddVideoActivity.this, "You are a mistake", Toast.LENGTH_SHORT).show();
+//                                        }
+//                                    });
                         }
                     }
                 })

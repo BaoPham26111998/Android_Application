@@ -125,10 +125,10 @@ public class AdapterVideo extends RecyclerView.Adapter<AdapterVideo.HolderView> 
         public HolderView(@NonNull View itemView) {
             super(itemView);
 
-//            videoView = itemView.findViewById(R.id.videoView);
-//            title = itemView.findViewById(R.id.titleTv);;
-//            timeTv = itemView.findViewById(R.id.timeTv);
-//            progressBar = itemView.findViewById(R.id.progressBar);
+            videoView = itemView.findViewById(R.id.videoView);
+            title = itemView.findViewById(R.id.titleTv);;
+            timeTv = itemView.findViewById(R.id.timeTv);
+            progressBar = itemView.findViewById(R.id.progressBar);
         }
     }
 }

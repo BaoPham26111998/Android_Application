@@ -10,6 +10,7 @@
     <color name="white">#FFFFFF</color>
     <color name="error_color">#B00020</color>
     <color name="receive_color">#693036</color>
+    <color name="black">#FF000000</color>
 
 
 </resources>

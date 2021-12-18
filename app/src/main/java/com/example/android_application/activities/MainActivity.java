@@ -7,21 +7,34 @@ import android.os.Bundle;
 import android.util.Base64;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.android_application.databinding.ActivityMainBinding;
+import com.example.android_application.models.Video;
+import com.example.android_application.ultilities.AdapterVideo;
 import com.example.android_application.ultilities.Constants;
 import com.example.android_application.ultilities.PreferenceManager;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 
 public class MainActivity extends AppCompatActivity {
-
+    private ArrayList<Video> videoArrayList;
+    FirebaseFirestore db;
+    private AdapterVideo adapterVideo;
+    private RecyclerView recyclerView;
     //Because view binding enabled, binding for each XML file will be generate automatically
     private ActivityMainBinding binding;
 
@@ -95,5 +108,36 @@ public class MainActivity extends AppCompatActivity {
                     finish();
                 })
                 .addOnFailureListener(e -> showToast("Unable to logout please try again later!"));
+    }
+
+    // TODO: Set up the recycler view before calling
+    private void loadVideosFromFirestore(){
+        videoArrayList =  new ArrayList<Video>();
+        db = FirebaseFirestore.getInstance();
+
+        db.collection("videos")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()){
+                            for (QueryDocumentSnapshot documentSnapshots : task.getResult()){
+                                Video video = new Video();
+                                Map<String, Object> videoData = documentSnapshots.getData();
+                                video.setId(videoData.get("id").toString());
+                                video.setVideoUrl(videoData.get("videoUrl").toString());
+                                video.setTitle(videoData.get("title").toString());
+                                video.setTimestamp(videoData.get("timestamp").toString());
+
+                                videoArrayList.add(video);
+                            }
+                            adapterVideo = new AdapterVideo(MainActivity.this, videoArrayList);
+                            recyclerView.setAdapter(adapterVideo);
+                        } else{
+                            Toast.makeText(MainActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
     }
 }
