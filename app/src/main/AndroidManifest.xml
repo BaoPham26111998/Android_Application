@@ -18,9 +18,6 @@
             android:name=".activities.AccountProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.Profile"
-            android:exported="false" />
-        <activity
             android:name=".activities.SignUpActivity"
             android:windowSoftInputMode="adjustResize" />
         <activity
