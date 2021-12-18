@@ -12,6 +12,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Android_application">
         <activity
+            android:name=".activities.CreatePost"
+            android:exported="false" />
+        <activity
+            android:name=".activities.AccountProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.Profile"
+            android:exported="false" />
+        <activity
             android:name=".activities.SignUpActivity"
             android:windowSoftInputMode="adjustResize" />
         <activity
@@ -25,6 +34,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.MainActivity" />
+
         <service
             android:name=".firebase.MessageService"
             android:exported="false">
@@ -32,9 +42,6 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
-
-
     </application>
 
 </manifest>

@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
-import android.util.Patterns;
 import android.view.View;
 import android.widget.Toast;
 
@@ -15,9 +14,10 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.android_application.databinding.ActivitySignUpBinding;
+import com.example.android_application.databinding.ActivityCreatePostBinding;
 import com.example.android_application.ultilities.Constants;
 import com.example.android_application.ultilities.PreferenceManager;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.ByteArrayOutputStream;
@@ -26,32 +26,32 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class SignUpActivity extends AppCompatActivity {
+public class CreatePost extends AppCompatActivity {
 
-    private ActivitySignUpBinding binding;
+    private ActivityCreatePostBinding binding;
     private PreferenceManager preferenceManager;
     private String encodedImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //Binding the sign up activity from the activity_sign_up XML file
-        binding = ActivitySignUpBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-        // Call preferenceManager to store the data information as string
+        binding = ActivityCreatePostBinding.inflate(getLayoutInflater());
         preferenceManager = new PreferenceManager(getApplicationContext());
+        setContentView(binding.getRoot());
+        loadUserInfo();
         setListeners();
+
+    }
+
+    private void loadUserInfo() {
+        //Load avatar
+        byte[] bytes = Base64.decode(preferenceManager.getString(Constants.IMAGE), Base64.DEFAULT);
+        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+        binding.imageProfile.setImageBitmap(bitmap);
+        showToast(preferenceManager.getString(Constants.USER_ID));
     }
 
     private void setListeners() {
-        // Redirect to previous page when click on sign in button
-        binding.textSignIn.setOnClickListener(v -> onBackPressed());
-        // Trigger the signup function when click on signup button
-        binding.buttonSignUp.setOnClickListener(v -> {
-            if (invalidSignUpDetail()){
-                signUp();
-            }
-        });
         // Redirect from application to devices image media folder to choose avatar when user clickon the avatar frame
         binding.layoutImage.setOnClickListener(v -> {
             //Open and Pick image from device media file
@@ -60,49 +60,42 @@ public class SignUpActivity extends AppCompatActivity {
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             pickImage.launch(intent);
         });
+        binding.buttonCreatePost.setOnClickListener(v -> {
+            createPost();
+        });
     }
 
-    // Set up the application notification for UI
-    private void showToast(String message){
-        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
-    }
-
-    private void signUp(){
+    private void createPost(){
         loading(true);
-        // Call Firebase firestore function
+        ArrayList list = new ArrayList();
         FirebaseFirestore database = FirebaseFirestore.getInstance();
-        //Set up user information to upload to the firebase
-        HashMap<String, Object> user = new HashMap<>();
-        user.put(Constants.NAME,binding.inputName.getText().toString());
-        user.put(Constants.EMAIL,binding.inputEmail.getText().toString());
-        user.put(Constants.PASSWORD,binding.inputPassword.getText().toString());
-        user.put(Constants.IMAGE,encodedImage);
-        ArrayList<Object> arrayPost = new ArrayList<>();
-        user.put("arrayPost", arrayPost);
 
-        //Add input data to firestore collection
-        database.collection(Constants.COLLECTION_USERS)
+        HashMap<String, Object> postArray = new HashMap<>();
+        postArray.put(Constants.POST_TITLE,binding.inputTitle.getText().toString());
+        postArray.put(Constants.POST_DESCRIPTION,binding.inputDescription.getText().toString());
+        postArray.put(Constants.POST_IMAGE,encodedImage);
+
+        list.add(postArray);
+        System.out.println("alo" + list.toString());
+        database.collection(Constants.COLLECTION_USERS).document(preferenceManager.getString(Constants.USER_ID))
                 //Upload user information to firestore database
-                .add(user)
-                // When UPLOAD DATA successfully we will need to save or define some values for future use
-                // such as define sign-in status, save the user-id, user name and their avatar
+                .update("arrayPost", FieldValue.arrayUnion(list.toArray()))
                 .addOnSuccessListener(documentReference -> {
                     loading(false);
-                    //Save the data to the preference manager when login successfully for the future use
-                    preferenceManager.putBoolean(Constants.IS_SIGNED_IN,true);
-                    preferenceManager.putString(Constants.USER_ID,documentReference.getId());
-                    preferenceManager.putString(Constants.NAME,binding.inputName.getText().toString());
-                    preferenceManager.putString(Constants.IMAGE,encodedImage);
                     Intent intent = new Intent(getApplicationContext(),MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
+                    showToast("Post created successfully");
                 })
                 // Throw exception when fail to upload to the firebase
                 .addOnFailureListener(exception -> {
                     loading(false);
                     showToast(exception.getMessage());
                 });
-    }
+        }
+
+
+
 
     //Convert image from JPEG to Bytes by using bitmap and Android Base 64 encoder library to send to the database
     private String encodeImage(Bitmap bitmap) {
@@ -131,12 +124,12 @@ public class SignUpActivity extends AppCompatActivity {
                             InputStream inputStream = getContentResolver().openInputStream(imageUri);
                             Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
                             //Call the avatar frame to put the image in.
-                            binding.avatar.setImageBitmap(bitmap);
+                            binding.postImage.setImageBitmap(bitmap);
                             //Disable the text Add Image in the avatar frame when there are a image
                             binding.textAddImage.setVisibility(View.GONE);
                             //Then call the encoded image function
                             encodedImage = encodeImage(bitmap);
-                        // Throw exception when input image is fail
+                            // Throw exception when input image is fail
                         } catch (FileNotFoundException e) {
                             e.printStackTrace();
                         }
@@ -145,53 +138,20 @@ public class SignUpActivity extends AppCompatActivity {
             }
     );
 
-
-
-    // Set up invalid input information
-    private Boolean invalidSignUpDetail() {
-        //Missing input image
-        if (encodedImage == null) {
-            showToast("Choose avatar");
-            return false;
-        //Missing input name
-        } else if (binding.inputName.getText().toString().trim().isEmpty()) {
-            showToast("Input your name");
-            return false;
-        //Missing input email
-        } else if (binding.inputEmail.getText().toString().trim().isEmpty()) {
-            showToast("Input your email");
-            return false;
-        //Invalid input email
-        } else if (!Patterns.EMAIL_ADDRESS.matcher(binding.inputEmail.getText().toString()).matches()) {
-            showToast("Email must contain @abcxyz.com");
-            return false;
-        //Missing input password
-        }else if (binding.inputPassword.getText().toString().trim().isEmpty()) {
-            showToast("Input your password");
-            return false;
-        //Missing input confirm password
-        }else if (binding.inputConfirmPassword.getText().toString().trim().isEmpty()) {
-            showToast("Input your confirm password");
-            return false;
-        //Password and Confirm password is not same
-        }else if (!binding.inputPassword.getText().toString().equals(binding.inputConfirmPassword.getText().toString())) {
-            showToast("Wrong confirm password");
-            return false;
-        }else {
-            return true;
-        }
+    // Set up the application notification for UI
+    private void showToast(String message) {
+        Toast.makeText(getApplicationContext(),message, Toast.LENGTH_SHORT).show();
     }
 
-    //Set up loading animation
     private void loading(Boolean loading){
         if(loading){
             //When loading is true
-            binding.buttonSignUp.setVisibility(View.INVISIBLE);
+            binding.buttonCreatePost.setVisibility(View.INVISIBLE);
             binding.progressBar.setVisibility(View.VISIBLE);
         }else {
             //When loading is false
             binding.progressBar.setVisibility(View.INVISIBLE);
-            binding.buttonSignUp.setVisibility(View.VISIBLE);
+            binding.buttonCreatePost.setVisibility(View.VISIBLE);
         }
     }
 }
