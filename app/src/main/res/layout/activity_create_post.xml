@@ -46,7 +46,7 @@
         <ImageView
             android:id="@+id/postImage"
             android:layout_width="@dimen/_250sdp"
-            android:layout_height="@dimen/_150sdp"
+            android:layout_height="@dimen/_250sdp"
             android:background="@drawable/background_post_image"
             android:scaleType="centerCrop"
             app:riv_oval="true"/>
