@@ -65,4 +65,11 @@ dependencies {
 
     //Picasso image converter
     implementation 'com.squareup.picasso:picasso:2.8'
+
+    //Dependency for circular image
+    implementation 'com.mikhaellopez:circularimageview:4.2.0'
+
+    // navigation
+    implementation 'androidx.navigation:navigation-fragment:2.0.0'
+    implementation 'androidx.navigation:navigation-ui:2.0.0'
 }

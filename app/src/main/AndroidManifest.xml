@@ -17,8 +17,11 @@
         <activity
             android:name=".activities.AccountProfileActivity"
             android:exported="false" />
+<!--        <activity-->
+<!--            android:name=".activities.Profile"-->
+<!--            android:exported="false" />-->
         <activity
-            android:name=".activities.Profile"
+            android:name=".activities.HomeActivity"
             android:exported="false" />
         <activity
             android:name=".activities.SignUpActivity"

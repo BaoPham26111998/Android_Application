@@ -10,6 +10,9 @@
     <color name="white">#FFFFFF</color>
     <color name="error_color">#B00020</color>
     <color name="receive_color">#693036</color>
-
+    <color name="colorPrimary">#000</color>
+    <color name="colorPrimaryDark">#000</color>
+    <color name="colorAccent">#000</color>
+    <color name="halfWhite">#ececec</color>
 
 </resources>
