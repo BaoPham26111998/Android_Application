@@ -7,22 +7,34 @@ import android.os.Bundle;
 import android.util.Base64;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.android_application.databinding.ActivityMainBinding;
+import com.example.android_application.models.Video;
+import com.example.android_application.adapters.AdapterVideo;
 import com.example.android_application.ultilities.Constants;
 import com.example.android_application.ultilities.PreferenceManager;
-import com.google.firebase.auth.FirebaseAuth;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 
 public class MainActivity extends AppCompatActivity {
-
+    private ArrayList<Video> videoArrayList;
+    FirebaseFirestore db;
+    private AdapterVideo adapterVideo;
+    private RecyclerView recyclerView;
     //Because view binding enabled, binding for each XML file will be generate automatically
     private ActivityMainBinding binding;
 
@@ -43,10 +55,8 @@ public class MainActivity extends AppCompatActivity {
     private void setListeners(){
         //log out by click in to the icon on the top right corner
         binding.imageSignOut.setOnClickListener(v -> logOut());
-        binding.fabNewPost.setOnClickListener(v ->
-                startActivity(new Intent(getApplicationContext(), CreatePost.class)));
-        binding.imageProfile.setOnClickListener(v ->
-                startActivity(new Intent(getApplicationContext(), AccountProfileActivity.class)));
+//        binding.fabNewChat.setOnClickListener(v ->
+//                startActivity(new Intent(getApplicationContext(), UsersAcitivity.class)));
     }
 
     // load user info in the application
@@ -75,7 +85,6 @@ public class MainActivity extends AppCompatActivity {
                 database.collection(Constants.COLLECTION_USERS).document(
                         preferenceManager.getString(Constants.USER_ID)
                 );
-//        showToast(preferenceManager.getString(Constants.USER_ID));
         documentReference.update(Constants.FCM_TOKEN, token)
                 //.addOnSuccessListener(unused -> showToast("Token updated successfully"))
                 .addOnFailureListener(e -> showToast("Unable to get Token"));
@@ -89,7 +98,6 @@ public class MainActivity extends AppCompatActivity {
                 database.collection(Constants.COLLECTION_USERS).document(
                         preferenceManager.getString(Constants.USER_ID)
                 );
-        FirebaseAuth.getInstance().signOut();
         HashMap<String, Object> updates = new HashMap<>();
         //delete the token after user logout on the database
         updates.put(Constants.FCM_TOKEN, FieldValue.delete());
@@ -100,5 +108,37 @@ public class MainActivity extends AppCompatActivity {
                     finish();
                 })
                 .addOnFailureListener(e -> showToast("Unable to logout please try again later!"));
+    }
+
+    // TODO: Set up the recycler view before calling
+    private void loadVideosFromFirestore(){
+        videoArrayList =  new ArrayList<Video>();
+        db = FirebaseFirestore.getInstance();
+
+        db.collection("videos")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()){
+                            for (QueryDocumentSnapshot documentSnapshots : task.getResult()){
+                                Video video = new Video();
+                                Map<String, Object> videoData = documentSnapshots.getData();
+                                video.setId(videoData.get(Constants.VIDEO_ID).toString());
+                                video.setVideoUrl(videoData.get(Constants.VIDEO_URL).toString());
+                                video.setTitle(videoData.get(Constants.VIDEO_TITLE).toString());
+                                video.setTimestamp(videoData.get(Constants.VIDEO_TIMESTAMP).toString());
+                                video.setUser(videoData.get(Constants.VIDEO_CREATOR).toString());
+
+                                videoArrayList.add(video);
+                            }
+                            adapterVideo = new AdapterVideo(MainActivity.this, videoArrayList, preferenceManager.getString(Constants.NAME));
+                            recyclerView.setAdapter(adapterVideo);
+                        } else{
+                            Toast.makeText(MainActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
     }
 }
