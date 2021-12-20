@@ -79,7 +79,7 @@ public class SignInActivity extends AppCompatActivity {
                         preferenceManager.putString(Constants.NAME, documentSnapshot.getString(Constants.NAME));
                         preferenceManager.putString(Constants.IMAGE, documentSnapshot.getString(Constants.IMAGE));
                         // test
-                        Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
                     } else {
