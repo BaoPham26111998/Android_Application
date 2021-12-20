@@ -33,4 +33,20 @@ public class Constants {
     public static final String POST_TITLE= "postTitle";
     public static final String POST_DESCRIPTION = "postDescription";
     public static final String POST_IMAGE = "postImage";
+
+    //Videos Info
+    public static final String VIDEO_ID = "id";
+    public static final String VIDEO_TITLE = "title";
+    public static final String VIDEO_URL = "videoUrl";
+    public static final String VIDEO_TIMESTAMP = "timestamp";
+    public static final String VIDEO_CREATOR = "user";
+
+    //Current chat messenger
+    public static final String KEY_COLLECTION_COVERSASION = "conversasions";
+    public static final String KEY_SENDER_NAME = "senderName";
+    public static final String KEY_RECEIVER_NAME = "receiverName";
+    public static final String KEY_SENDER_IMAGE = "senderImage";
+    public static final String KEY_RECEIVER_IMAGE = "receiverImage";
+    public static final String KEY_LAST_MESSAGE = "lastMessage";
+
 }

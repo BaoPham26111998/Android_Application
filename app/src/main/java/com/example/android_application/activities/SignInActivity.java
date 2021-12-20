@@ -69,6 +69,7 @@ public class SignInActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         mAuth.signInWithEmailAndPassword(binding.inputEmail.getText().toString(),binding.inputPassword.getText().toString())
                 .addOnCompleteListener(task -> {
+
                     firebaseUser = mAuth.getCurrentUser();
                     database.collection(Constants.COLLECTION_USERS).document(mAuth.getUid())
                             .get()

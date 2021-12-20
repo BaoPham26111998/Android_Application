@@ -12,10 +12,24 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Android_application">
         <activity
+            android:name=".activities.ChatActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ChatUserActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.MainChat"
+            android:exported="false" />
+        <activity
             android:name=".activities.CreatePost"
             android:exported="false" />
         <activity
             android:name=".activities.AccountProfileActivity"
+            android:exported="false" /> <!-- <activity -->
+        <!-- android:name=".activities.Profile" -->
+        <!-- android:exported="false" /> -->
+        <activity
+            android:name=".activities.MainActivity"
             android:exported="false" />
         <activity
             android:name=".activities.SignUpActivity"
@@ -30,7 +44,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.MainActivity" />
 
         <service
             android:name=".firebase.MessageService"

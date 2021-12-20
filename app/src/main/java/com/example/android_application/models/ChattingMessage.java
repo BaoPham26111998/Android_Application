@@ -6,4 +6,6 @@ public class ChattingMessage {
     //Set up Chatting messages object
     public String sendId, receiverID, message, dateTime;
     public Date dateObject;
+    public String conversasionId, conversasionName, conversasionImage;
+
 }

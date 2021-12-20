@@ -4,41 +4,61 @@ import java.io.Serializable;
 
 public class Post implements Serializable {
 
-    public String postImage, postTitle, postDescription;
+    public String name;
+    public int image;
+    public int postImg;
+    public String date;
+    public String description;
 
     public Post(){
 
     }
 
-    public Post(String postImage, String postTitle, String postDescription) {
-        this.postImage = postImage;
-        this.postTitle = postTitle;
-        this.postDescription = postDescription;
+    public Post(String name, int image, int postImg, String date, String description) {
+        this.name = name;
+        this.image = image;
+        this.postImg = postImg;
+        this.date = date;
+        this.description = description;
     }
 
-    public String getPostImage() {
-        return postImage;
+    public String getName() {
+        return name;
     }
 
-    public void setPostImage(String postImage) {
-        this.postImage = postImage;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getPostTitle() {
-        return postTitle;
+    public int getImage() {
+        return image;
     }
 
-    public void setPostTitle(String postTitle) {
-        this.postTitle = postTitle;
+    public void setImage(int image) {
+        this.image = image;
     }
 
-    public String getPostDescription() {
-        return postDescription;
+    public int getPostImg() {
+        return postImg;
     }
 
-    public void setPostDescription(String postDescription) {
-        this.postDescription = postDescription;
+    public void setPostImg(int postImg) {
+        this.postImg = postImg;
     }
 
+    public String getDate() {
+        return date;
+    }
 
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }
