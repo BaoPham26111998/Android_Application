@@ -18,15 +18,33 @@
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
-        <com.makeramen.roundedimageview.RoundedImageView
-            android:id="@+id/imageProfile"
-            android:layout_width="@dimen/_35sdp"
-            android:layout_height="@dimen/_35sdp"
-            android:layout_marginTop="@dimen/_2sdp"
-            android:background="@drawable/background_icon"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:riv_corner_radius="@dimen/_8sdp"/>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.makeramen.roundedimageview.RoundedImageView
+                android:id="@+id/imageProfile"
+                android:layout_width="@dimen/_50sdp"
+                android:layout_height="@dimen/_50sdp"
+                android:layout_marginTop="@dimen/_2sdp"
+                android:background="@drawable/background_icon"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:riv_corner_radius="@dimen/_8sdp"
+                android:layout_gravity="center"/>
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imageReturn"
+                android:layout_width="@dimen/_40sdp"
+                android:layout_height="@dimen/_50sdp"
+                android:layout_gravity="right"
+                android:background="@drawable/background_icon"
+                android:padding="@dimen/_6sdp"
+                android:src="@drawable/ic_back"
+                android:tint="@color/main_color" />
+        </FrameLayout>
+
+
 
     <TextView
         android:layout_width="wrap_content"
@@ -77,28 +95,25 @@
         android:textColor="@color/text1_color"
         android:textSize="@dimen/_13ssp"/>
 
-    <EditText
-        android:id="@+id/inputDescription"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_150sdp"
-        android:layout_marginTop="@dimen/_16sdp"
-        android:background="@color/input_color"
-        android:hint="Description"
-        android:importantForAutofill="no"
-        android:gravity="start"
-        android:paddingTop="@dimen/_10sdp"
-        android:inputType="textMultiLine"
-        android:maxLines="100"
-        android:paddingStart="@dimen/_16sdp"
-        android:paddingEnd="@dimen/_16sdp"
-        android:textColor="@color/text1_color"
-        android:textSize="@dimen/_13ssp"/>
 
+        <EditText
+            android:id="@+id/inputDescription"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_150sdp"
+            android:layout_marginTop="@dimen/_16sdp"
+            android:background="@color/input_color"
+            android:gravity="start"
+            android:hint="Description"
+            android:importantForAutofill="no"
+            android:inputType="textMultiLine"
+            android:maxLines="100"
+            android:paddingStart="@dimen/_16sdp"
+            android:paddingTop="@dimen/_10sdp"
+            android:paddingEnd="@dimen/_16sdp"
+            android:textColor="@color/text1_color"
+            android:textSize="@dimen/_13ssp" />
 
-
-
-
-    <FrameLayout
+        <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_16sdp"
@@ -122,6 +137,26 @@
             android:layout_gravity="center"
             android:visibility="invisible"/>
     </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_16sdp"
+            android:animateLayoutChanges="true">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonReturn"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/_40sdp"
+                android:layout_marginTop="@dimen/_16sdp"
+                android:text="@string/create_post"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_13ssp"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                app:cornerRadius="@dimen/_8sdp" />
+
+        </FrameLayout>
 
 
     </LinearLayout>

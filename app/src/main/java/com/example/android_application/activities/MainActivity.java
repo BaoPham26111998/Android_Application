@@ -1,6 +1,7 @@
 package com.example.android_application.activities;
 
 // Duong part
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -9,6 +10,15 @@ import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.android_application.R;
 import com.example.android_application.adapters.AdapterVideo;
@@ -25,14 +35,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -68,9 +70,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications, R.id.navigation_market, R.id.navigation_profile
-        )
-                .build();
+                R.id.navigation_home,
+                R.id.navigation_dashboard,
+                R.id.navigation_notifications,
+                R.id.navigation_market,
+                R.id.navigation_profile
+        ).build();
+
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupWithNavController(binding.navView, navController);
         loadUserInfo();
@@ -116,22 +122,37 @@ public class MainActivity extends AppCompatActivity {
 
     //logout function
     private void logOut(){
-        showToast("Signing out");
-        FirebaseFirestore database = FirebaseFirestore.getInstance();
-        DocumentReference documentReference =
-                database.collection(Constants.COLLECTION_USERS).document(
-                        preferenceManager.getString(Constants.USER_ID)
-                );
-        HashMap<String, Object> updates = new HashMap<>();
-        //delete the token after user logout on the database
-        updates.put(Constants.FCM_TOKEN, FieldValue.delete());
-        documentReference.update(updates)
-                .addOnSuccessListener(unused -> {
-                    preferenceManager.clear();
-                    startActivity(new Intent(getApplicationContext(), SignInActivity.class));
-                    finish();
+        new AlertDialog.Builder(this)
+                .setTitle("Logout Entry")
+                .setMessage("Are you sure you want to logout?")
+
+                // Specifying a listener allows you to take an action before dismissing the dialog.
+                // The dialog is automatically dismissed when a dialog button is clicked.
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        showToast("Signed out");
+                        FirebaseFirestore database = FirebaseFirestore.getInstance();
+                        DocumentReference documentReference =
+                                database.collection(Constants.COLLECTION_USERS).document(
+                                        preferenceManager.getString(Constants.USER_ID)
+                                );
+                        HashMap<String, Object> updates = new HashMap<>();
+                        //delete the token after user logout on the database
+                        updates.put(Constants.FCM_TOKEN, FieldValue.delete());
+                        documentReference.update(updates)
+                                .addOnSuccessListener(unused -> {
+                                    preferenceManager.clear();
+                                    startActivity(new Intent(getApplicationContext(), SignInActivity.class));
+                                    finish();
+                                })
+                                .addOnFailureListener(e -> showToast("Unable to logout please try again later!"));
+                    }
                 })
-                .addOnFailureListener(e -> showToast("Unable to logout please try again later!"));
+                // A null listener allows the button to dismiss the dialog and take no further action.
+                .setNegativeButton(android.R.string.no, null)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+
     }
 
     // TODO: Set up the recycler view before calling

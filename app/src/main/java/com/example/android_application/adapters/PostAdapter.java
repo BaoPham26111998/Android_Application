@@ -1,71 +1,55 @@
 package com.example.android_application.adapters;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
-
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.android_application.R;
+import com.example.android_application.databinding.PostItemBinding;
 import com.example.android_application.models.Post;
-import com.example.android_application.models.Story;
-import com.mikhaellopez.circularimageview.CircularImageView;
+
+import java.util.List;
 
 
-public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
-
-    private Post[] listData;
-
-    public PostAdapter(Post[] listData){
-        this.listData = listData;
+public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
+    private final List<Post> postList;
+    public PostAdapter(List<Post> postList) {
+        this.postList = postList;
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
-        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View listItem = layoutInflater.inflate(R.layout.post_item, parent, false);
-        ViewHolder viewHolder = new ViewHolder(listItem);
-        return  viewHolder;
+    public PostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        PostItemBinding postItemBinding = PostItemBinding.inflate(
+                LayoutInflater.from(parent.getContext())
+        );
+        return new PostViewHolder(postItemBinding);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-
-        final Post storyModel = listData[position];
-        holder.name.setText(storyModel.name);
-        holder.imageView.setImageResource(storyModel.image);
-        holder.date.setText(storyModel.date);
-        holder.postImage.setImageResource(storyModel.postImg);
-        holder.description.setText(storyModel.description);
-
+    public void onBindViewHolder(@NonNull PostAdapter.PostViewHolder holder, int position) {
+        holder.SetPostData(postList.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return listData.length;
+        return postList.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder{
-
-        TextView name, description, date;
-        ImageView postImage;
-        CircularImageView imageView;
-
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-            this.imageView = itemView.findViewById(R.id.profile_image);
-            this.name = itemView.findViewById(R.id.profile_name);
-            this.date = itemView.findViewById(R.id.profile_date);
-            this.description = itemView.findViewById(R.id.post_description);
-            this.postImage = itemView.findViewById(R.id.post_image);
-
+    class PostViewHolder extends RecyclerView.ViewHolder{
+        PostItemBinding binding;
+        PostViewHolder(PostItemBinding postItemBinding){
+            super(postItemBinding.getRoot());
+            binding = postItemBinding;
+        }
+        void SetPostData(Post post){
+            binding.postImage.setImageURI(post.postImg);
+            binding.profileImage.setImageBitmap(post.imageProfile);
+            binding.postTitle.setText(post.title);
+            binding.postDescription.setText(post.description);
+            binding.profileName.setText(post.name);
+            binding.profileDate.setText(post.date);
         }
     }
 }

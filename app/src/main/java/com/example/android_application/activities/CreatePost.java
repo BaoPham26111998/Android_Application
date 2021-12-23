@@ -1,36 +1,46 @@
 package com.example.android_application.activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.Base64;
 import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.android_application.databinding.ActivityCreatePostBinding;
 import com.example.android_application.ultilities.Constants;
 import com.example.android_application.ultilities.PreferenceManager;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 public class CreatePost extends AppCompatActivity {
 
     private ActivityCreatePostBinding binding;
     private PreferenceManager preferenceManager;
-    private String encodedImage;
+    private StorageReference storageReference;
+    private Uri imageUri;
+    private ProgressDialog progressDialog;
+    private String imageId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +50,6 @@ public class CreatePost extends AppCompatActivity {
         setContentView(binding.getRoot());
         loadUserInfo();
         setListeners();
-
     }
 
     private void loadUserInfo() {
@@ -52,31 +61,53 @@ public class CreatePost extends AppCompatActivity {
     }
 
     private void setListeners() {
-        // Redirect from application to devices image media folder to choose avatar when user clickon the avatar frame
-        binding.layoutImage.setOnClickListener(v -> {
-            //Open and Pick image from device media file
-            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            //Allow application to read the media file
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            pickImage.launch(intent);
-        });
+        // Redirect from application to devices image media folder to choose avatar when user click on the avatar frame
+        binding.layoutImage.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        selectImage();
+                    }
+                }
+
+        );
         binding.buttonCreatePost.setOnClickListener(v -> {
             createPost();
         });
     }
 
+    private void selectImage(){
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(intent,100);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 100 && data != null && data.getData() != null){
+            imageUri = data.getData();
+            binding.postImage.setImageURI(imageUri);
+            binding.textAddImage.setVisibility(View.GONE);
+        }
+    }
+
     private void createPost(){
         loading(true);
+
         ArrayList list = new ArrayList();
         FirebaseFirestore database = FirebaseFirestore.getInstance();
-
         HashMap<String, Object> postArray = new HashMap<>();
         postArray.put(Constants.POST_TITLE,binding.inputTitle.getText().toString());
         postArray.put(Constants.POST_DESCRIPTION,binding.inputDescription.getText().toString());
-        postArray.put(Constants.POST_IMAGE,encodedImage);
-
         list.add(postArray);
-        System.out.println("alo" + list.toString());
+
+        upLoadImage();
+        upLoadToPostCollection();
+
+
+
         database.collection(Constants.COLLECTION_USERS).document(preferenceManager.getString(Constants.USER_ID))
                 //Upload user information to firestore database
                 .update("arrayPost", FieldValue.arrayUnion(list.toArray()))
@@ -94,20 +125,45 @@ public class CreatePost extends AppCompatActivity {
                 });
         }
 
+        private void upLoadToPostCollection(){
+        FirebaseFirestore database2 = FirebaseFirestore.getInstance();
+            HashMap<String, Object> postArray = new HashMap<>();
+            postArray.put(Constants.POST_TITLE,binding.inputTitle.getText().toString());
+            postArray.put(Constants.POST_DESCRIPTION,binding.inputDescription.getText().toString());
+            postArray.put(Constants.USER_ID,preferenceManager.getString(Constants.USER_ID));
+            postArray.put(Constants.NAME,preferenceManager.getString(Constants.NAME));
+            postArray.put(Constants.IMAGE,preferenceManager.getString(Constants.IMAGE));
+            postArray.put(Constants.TIMESTAMP,new Date());
+            postArray.put(Constants.POST_IMAGE_ID,imageId);
+        database2.collection(Constants.COLLECTION_POST).add(postArray)
+                .addOnSuccessListener(task -> {
+                    showToast("Post add to firebase");
+                }).addOnFailureListener(task ->{
+                    showToast("Post add fail");
+        });
+        }
 
-
-
-    //Convert image from JPEG to Bytes by using bitmap and Android Base 64 encoder library to send to the database
-    private String encodeImage(Bitmap bitmap) {
-        //Reformat the image size to fit the avatar frame
-        int previewWidth = 150;
-        int previewHeight  = bitmap.getHeight() * previewWidth / bitmap.getWidth();
-        Bitmap previewBitmap = Bitmap.createScaledBitmap(bitmap, previewWidth,previewHeight,false);
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        //Encode image from JPEG to string Bytes to add to the database
-        previewBitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
-        byte[] bytes = byteArrayOutputStream.toByteArray();
-        return Base64.encodeToString(bytes, Base64.DEFAULT);
+    private void upLoadImage(){
+        SimpleDateFormat formatter =   new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss", Locale.CANADA);
+        Date now = new Date();
+        String filename = formatter.format(now);
+        imageId = preferenceManager.getString(Constants.USER_ID)+" "+filename;
+        storageReference = FirebaseStorage
+                .getInstance()
+                .getReference(imageId);
+        showToast("Uploading image");
+        storageReference.putFile(imageUri)
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        showToast("Upload Image success fully");
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                showToast("Upload image fail");
+            }
+        });
     }
 
     //After picked an image from device you will need to receive the result when perform the pick image action
@@ -119,20 +175,15 @@ public class CreatePost extends AppCompatActivity {
                     //When the data was found (or the image has been chosen)
                     if(result.getData() != null){
                         //We will set the URI of the image to grant read permission for the encodeImage function
-                        Uri imageUri = result.getData().getData();
-                        try{
-                            InputStream inputStream = getContentResolver().openInputStream(imageUri);
-                            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                        imageUri = result.getData().getData();
                             //Call the avatar frame to put the image in.
-                            binding.postImage.setImageBitmap(bitmap);
+                            binding.postImage.setImageURI(imageUri);
                             //Disable the text Add Image in the avatar frame when there are a image
                             binding.textAddImage.setVisibility(View.GONE);
                             //Then call the encoded image function
-                            encodedImage = encodeImage(bitmap);
                             // Throw exception when input image is fail
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                        }
+                    }else {
+                        showToast("Cannot get the Image from the media file");
                     }
                 }
             }
@@ -142,6 +193,7 @@ public class CreatePost extends AppCompatActivity {
     private void showToast(String message) {
         Toast.makeText(getApplicationContext(),message, Toast.LENGTH_SHORT).show();
     }
+
 
     private void loading(Boolean loading){
         if(loading){
