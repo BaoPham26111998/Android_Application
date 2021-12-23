@@ -36,21 +36,24 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:paddingLeft="@dimen/_10sdp"
                     >
 
                     <TextView
                         android:id="@+id/profile_name"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Your Heading"
-                        android:textSize="16sp" />
+                        android:text="Your Name"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
                     <TextView
                         android:id="@+id/profile_date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/profile_name"
-                        android:textSize="11dp"
-                        android:text="ggg" />
+                        android:text="ggg"
+                        android:textSize="11dp" />
 
                     <TextView
                         android:id="@+id/profile_option"
@@ -72,6 +75,13 @@
                 android:layout_marginVertical="8dp"
                 android:orientation="vertical"
                 android:gravity="left">
+                <TextView
+                    android:id="@+id/post_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:layout_marginLeft="10dp"
+                    android:text="text here"/>
                 <TextView
                     android:id="@+id/post_description"
                     android:layout_width="match_parent"

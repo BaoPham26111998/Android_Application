@@ -5,24 +5,38 @@
       <map>
         <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/drawable/background_chat_input.xml" value="0.15" />
         <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/drawable/background_content_bottom.xml" value="0.2712820512820513" />
+        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/drawable/background_icon.xml" value="0.2657407407407407" />
         <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/drawable/background_image.xml" value="0.15" />
         <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/drawable/background_post_image.xml" value="0.15" />
+        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/drawable/ic_back.xml" value="0.2657407407407407" />
+        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/drawable/ic_logout.xml" value="0.2657407407407407" />
         <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/activity_account_profile.xml" value="0.264" />
         <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/activity_chat.xml" value="0.259375" />
         <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/activity_chat_user.xml" value="0.12760416666666666" />
         <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/activity_create_post.xml" value="0.264" />
-        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/activity_home.xml" value="0.12760416666666666" />
+        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/activity_home.xml" value="0.264" />
         <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/activity_main.xml" value="0.152" />
         <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/activity_main_chat.xml" value="0.12760416666666666" />
         <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/activity_profile.xml" value="0.13333333333333333" />
         <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/activity_sign_up.xml" value="0.259375" />
         <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/activity_signin.xml" value="0.264" />
         <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/activity_users.xml" value="0.259375" />
+        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/fragment_dashboard.xml" value="0.259375" />
+        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/fragment_home.xml" value="0.259375" />
+        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/fragment_market.xml" value="0.259375" />
+        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/fragment_notifications.xml" value="0.259375" />
+        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/fragment_profile.xml" value="0.259375" />
+        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/industry_app_item.xml" value="0.259375" />
         <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/item_container_post.xml" value="0.259375" />
         <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/item_container_receive_message.xml" value="0.259375" />
         <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/item_container_recent_conversasion.xml" value="0.12760416666666666" />
         <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/item_container_sent_message.xml" value="0.259375" />
         <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/item_container_user.xml" value="0.259375" />
+        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/item_industry.xml" value="0.259375" />
+        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/post_item.xml" value="0.259375" />
+        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/row_video.xml" value="0.259375" />
+        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/rowlayout.xml" value="0.259375" />
+        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/story_item.xml" value="0.259375" />
       </map>
     </option>
   </component>
