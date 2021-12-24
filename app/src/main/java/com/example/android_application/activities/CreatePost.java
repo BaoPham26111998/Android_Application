@@ -14,9 +14,11 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.android_application.R;
 import com.example.android_application.databinding.ActivityCreatePostBinding;
 import com.example.android_application.ultilities.Constants;
 import com.example.android_application.ultilities.PreferenceManager;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -31,6 +33,7 @@ public class CreatePost extends AppCompatActivity {
     private ActivityCreatePostBinding binding;
     private PreferenceManager preferenceManager;
     private String encodedImage;
+    private FloatingActionButton toAddVideoFab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +43,16 @@ public class CreatePost extends AppCompatActivity {
         setContentView(binding.getRoot());
         loadUserInfo();
         setListeners();
+
+        toAddVideoFab = (FloatingActionButton) findViewById(R.id.toAddVideoFab);
+        toAddVideoFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(CreatePost.this, AddVideoActivity.class);
+                intent.putExtra("userId", preferenceManager.getString(Constants.USER_ID));
+                startActivity(intent);
+            }
+        });
 
     }
 

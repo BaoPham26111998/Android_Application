@@ -12,14 +12,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Android_application">
         <activity
+            android:name=".PhotoEditingActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.CreatePost"
             android:exported="false" />
         <activity
             android:name=".activities.AccountProfileActivity"
-            android:exported="false" />
-<!--        <activity-->
-<!--            android:name=".activities.Profile"-->
-<!--            android:exported="false" />-->
+            android:exported="false" /> <!-- <activity -->
+        <!-- android:name=".activities.Profile" -->
+        <!-- android:exported="false" /> -->
         <activity
             android:name=".activities.HomeActivity"
             android:exported="false" />

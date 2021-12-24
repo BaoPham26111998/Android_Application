@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> showToast("Unable to logout please try again later!"));
     }
 
-    // TODO: Set up the recycler view before calling
+    // TODO: Set up the recycler view in wherever you want the video to be displayed before calling
     private void loadVideosFromFirestore(){
         videoArrayList =  new ArrayList<Video>();
         db = FirebaseFirestore.getInstance();
