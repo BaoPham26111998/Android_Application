@@ -110,22 +110,23 @@
                     android:layout_width="20dp"
                     android:layout_margin="5dp"
                     android:layout_height="20dp"
-                    android:tint="#000"
+                    android:visibility="visible"
                     android:src="@drawable/heart"
                     tools:src="@drawable/heart" />
                 <ImageView
-                    android:id="@+id/feeds_post_text"
+                    android:id="@+id/feeds_post_liked"
                     android:layout_width="20dp"
-                    android:layout_marginVertical="5dp"
-                    android:layout_marginLeft="10dp"
+                    android:layout_margin="5dp"
                     android:layout_height="20dp"
-                    android:tint="#000"
-                    android:src="@drawable/messanger" />
+                    android:visibility="gone"
+                    android:tint="@color/main_darker_color"
+                    android:src="@drawable/heart" />
+
                 <ImageView
                     android:id="@+id/feeds_post_share"
                     android:layout_width="20dp"
                     android:layout_marginVertical="5dp"
-                    android:layout_marginLeft="20dp"
+                    android:layout_marginLeft="5dp"
                     android:layout_height="20dp"
                     android:tint="#000"
                     android:src="@drawable/share" />

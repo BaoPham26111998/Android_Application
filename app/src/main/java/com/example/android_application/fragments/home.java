@@ -67,6 +67,7 @@ public class home extends Fragment{
         FirebaseFirestore database = FirebaseFirestore.getInstance();
         FirebaseStorage storage = FirebaseStorage.getInstance();
 
+
         database.collection(Constants.COLLECTION_POST)
                 .get()
                 .addOnCompleteListener(task ->{
@@ -79,15 +80,18 @@ public class home extends Fragment{
                         for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
                             byte[] bytes = Base64.decode(queryDocumentSnapshot.getString(Constants.IMAGE), Base64.DEFAULT);
                             Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                            storage.getReference(queryDocumentSnapshot.getString(Constants.POST_IMAGE_ID));
                                 Post post = new Post();
+//                                post.postImg = storage.
                                 post.date = queryDocumentSnapshot.getDate(Constants.TIMESTAMP).toString();
                                 post.name = queryDocumentSnapshot.getString(Constants.NAME);
                                 post.imageProfile = bitmap;
                                 post.title = queryDocumentSnapshot.getString(Constants.POST_TITLE);
                                 post.description = queryDocumentSnapshot.getString(Constants.POST_DESCRIPTION);
+                                post.like = queryDocumentSnapshot.getDouble(Constants.POST_LIKE).intValue()+" likes";
+                                post.comment = queryDocumentSnapshot.getDouble(Constants.POST_COMMENT).intValue()+ " comments";
                                 posts.add(post);
                             }
-
                         PostAdapter postAdapter = new PostAdapter(posts);
                         postRecycler.setAdapter(postAdapter);
                         }

@@ -35,6 +35,8 @@ public class Constants {
     public static final String POST_DESCRIPTION = "postDescription";
     public static final String POST_IMAGE = "postImage";
     public static final String POST_IMAGE_ID = "postImageId";
+    public static final String POST_LIKE = "postLike";
+    public static final String POST_COMMENT = "postComment";
 
     //Videos Info
     public static final String VIDEO_ID = "id";

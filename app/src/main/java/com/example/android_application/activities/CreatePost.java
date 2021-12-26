@@ -133,6 +133,8 @@ public class CreatePost extends AppCompatActivity {
             postArray.put(Constants.USER_ID,preferenceManager.getString(Constants.USER_ID));
             postArray.put(Constants.NAME,preferenceManager.getString(Constants.NAME));
             postArray.put(Constants.IMAGE,preferenceManager.getString(Constants.IMAGE));
+            postArray.put(Constants.POST_LIKE,0);
+            postArray.put(Constants.POST_COMMENT,0);
             postArray.put(Constants.TIMESTAMP,new Date());
             postArray.put(Constants.POST_IMAGE_ID,imageId);
         database2.collection(Constants.COLLECTION_POST).add(postArray)

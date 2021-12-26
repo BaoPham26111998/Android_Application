@@ -1,6 +1,7 @@
 package com.example.android_application.adapters;
 
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -50,6 +51,16 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             binding.postDescription.setText(post.description);
             binding.profileName.setText(post.name);
             binding.profileDate.setText(post.date);
+            binding.feedsLikesCount.setText(post.like);
+            binding.feedsCommentCount.setText(post.comment);
+            binding.feedsPostLike.setOnClickListener(v -> {
+                binding.feedsPostLike.setVisibility(View.GONE);
+                binding.feedsPostLiked.setVisibility(View.VISIBLE);
+            });
+            binding.feedsPostLiked.setOnClickListener(v -> {
+                binding.feedsPostLike.setVisibility(View.VISIBLE);
+                binding.feedsPostLiked.setVisibility(View.GONE);
+            });
         }
     }
 }
