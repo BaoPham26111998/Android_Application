@@ -1,6 +1,6 @@
 package com.example.android_application.activities;
 
-import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Base64;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -17,30 +18,32 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.android_application.databinding.ActivityCreatePostBinding;
+import com.example.android_application.models.Upload;
 import com.example.android_application.ultilities.Constants;
 import com.example.android_application.ultilities.PreferenceManager;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 
 public class CreatePost extends AppCompatActivity {
 
     private ActivityCreatePostBinding binding;
     private PreferenceManager preferenceManager;
-    private StorageReference storageReference;
-    private Uri imageUri;
-    private ProgressDialog progressDialog;
+    private Uri mImageUri;
+    private String imageUrl;
     private String imageId;
+    private StorageReference storageReference;
+    private DatabaseReference databaseReference;
+    private StorageTask storageTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +51,9 @@ public class CreatePost extends AppCompatActivity {
         binding = ActivityCreatePostBinding.inflate(getLayoutInflater());
         preferenceManager = new PreferenceManager(getApplicationContext());
         setContentView(binding.getRoot());
+        String userId = preferenceManager.getString(Constants.USER_ID);
+        storageReference = FirebaseStorage.getInstance().getReference("posts");
+        databaseReference = FirebaseDatabase.getInstance().getReference("post");
         loadUserInfo();
         setListeners();
     }
@@ -72,7 +78,12 @@ public class CreatePost extends AppCompatActivity {
 
         );
         binding.buttonCreatePost.setOnClickListener(v -> {
-            createPost();
+            if (storageTask != null && storageTask.isInProgress()){
+                showToast("Uploading");
+            }else {
+                createPost();
+            }
+
         });
     }
 
@@ -87,47 +98,104 @@ public class CreatePost extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == 100 && data != null && data.getData() != null){
-            imageUri = data.getData();
-            binding.postImage.setImageURI(imageUri);
+            mImageUri = data.getData();
+            binding.postImage.setImageURI(mImageUri);
             binding.textAddImage.setVisibility(View.GONE);
         }
     }
 
+    private String getFileExtension(Uri uri){
+        ContentResolver cR = getContentResolver();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        return mime.getExtensionFromMimeType(cR.getType(uri));
+    }
+
     private void createPost(){
-        loading(true);
+        if(mImageUri != null){
+            loading(true);
+            StorageReference fileReference = storageReference.child(
+                    System.currentTimeMillis()+"."+getFileExtension(mImageUri));
+                    storageTask = fileReference.putFile(mImageUri)
+                            .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                @Override
+                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                    loading(false);
 
-        ArrayList list = new ArrayList();
-        FirebaseFirestore database = FirebaseFirestore.getInstance();
-        HashMap<String, Object> postArray = new HashMap<>();
-        postArray.put(Constants.POST_TITLE,binding.inputTitle.getText().toString());
-        postArray.put(Constants.POST_DESCRIPTION,binding.inputDescription.getText().toString());
-        list.add(postArray);
+                                    fileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                        @Override
+                                        public void onSuccess(Uri uri) {
+                                            String upLoadId = databaseReference.push().getKey();
+                                            imageUrl = uri.toString();
+                                            Upload upload = new Upload(binding.inputTitle.getText().toString().trim(),
+                                                    uri.toString(),
+                                                    binding.inputDescription.getText().toString().trim(),
+                                                    preferenceManager.getString(Constants.IMAGE)
+                                            );
+                                            upLoadToPostCollection();
+                                            databaseReference.child(upLoadId).setValue(upload).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void unused) {
+                                                    showToast("Image Uploaded");
+                                                }
+                                            });
+                                        }
+                                    });
 
-        upLoadImage();
-        upLoadToPostCollection();
-
-
-
-        database.collection(Constants.COLLECTION_USERS).document(preferenceManager.getString(Constants.USER_ID))
-                //Upload user information to firestore database
-                .update("arrayPost", FieldValue.arrayUnion(list.toArray()))
-                .addOnSuccessListener(documentReference -> {
-                    loading(false);
-                    Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
-                    showToast("Post created successfully");
-                })
-                // Throw exception when fail to upload to the firebase
-                .addOnFailureListener(exception -> {
-                    loading(false);
-                    showToast(exception.getMessage());
-                });
+                                    Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    startActivity(intent);
+                                    showToast("Upload successful");
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            loading(false);
+                            showToast("Upload fail");
+                        }
+                    });
+        }else {
+            showToast("No file selected");
         }
+    }
+
+
+
+
+//    private void createPost(){
+//        loading(true);
+//
+//        ArrayList list = new ArrayList();
+//        FirebaseFirestore database = FirebaseFirestore.getInstance();
+//        HashMap<String, Object> postArray = new HashMap<>();
+//        postArray.put(Constants.POST_TITLE,binding.inputTitle.getText().toString());
+//        postArray.put(Constants.POST_DESCRIPTION,binding.inputDescription.getText().toString());
+//        list.add(postArray);
+//
+//        upLoadImage();
+//        upLoadToPostCollection();
+//
+//
+//        database.collection(Constants.COLLECTION_USERS).document(preferenceManager.getString(Constants.USER_ID))
+//                //Upload user information to firestore database
+//                .update("arrayPost", FieldValue.arrayUnion(list.toArray()))
+//                .addOnSuccessListener(documentReference -> {
+//                    loading(false);
+//                    Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+//                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//                    startActivity(intent);
+//                    showToast("Post created successfully");
+//                })
+//                // Throw exception when fail to upload to the firebase
+//                .addOnFailureListener(exception -> {
+//                    loading(false);
+//                    showToast(exception.getMessage());
+//                });
+//        }
 
         private void upLoadToPostCollection(){
         FirebaseFirestore database2 = FirebaseFirestore.getInstance();
             HashMap<String, Object> postArray = new HashMap<>();
+            postArray.put("imageUrl",imageUrl);
             postArray.put(Constants.POST_TITLE,binding.inputTitle.getText().toString());
             postArray.put(Constants.POST_DESCRIPTION,binding.inputDescription.getText().toString());
             postArray.put(Constants.USER_ID,preferenceManager.getString(Constants.USER_ID));
@@ -145,28 +213,28 @@ public class CreatePost extends AppCompatActivity {
         });
         }
 
-    private void upLoadImage(){
-        SimpleDateFormat formatter =   new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss", Locale.CANADA);
-        Date now = new Date();
-        String filename = formatter.format(now);
-        imageId = preferenceManager.getString(Constants.USER_ID)+" "+filename;
-        storageReference = FirebaseStorage
-                .getInstance()
-                .getReference(imageId);
-        showToast("Uploading image");
-        storageReference.putFile(imageUri)
-                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        showToast("Upload Image success fully");
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                showToast("Upload image fail");
-            }
-        });
-    }
+//    private void upLoadImage(){
+//        SimpleDateFormat formatter =   new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss", Locale.CANADA);
+//        Date now = new Date();
+//        String filename = formatter.format(now);
+//        imageId = preferenceManager.getString(Constants.USER_ID)+" "+filename;
+//        storageReference = FirebaseStorage
+//                .getInstance()
+//                .getReference(imageId);
+//        showToast("Uploading image");
+//        storageReference.putFile(imageUri)
+//                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//                    @Override
+//                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//                        showToast("Upload Image success fully");
+//                    }
+//                }).addOnFailureListener(new OnFailureListener() {
+//            @Override
+//            public void onFailure(@NonNull Exception e) {
+//                showToast("Upload image fail");
+//            }
+//        });
+//    }
 
     //After picked an image from device you will need to receive the result when perform the pick image action
     //The result is the image
@@ -177,9 +245,9 @@ public class CreatePost extends AppCompatActivity {
                     //When the data was found (or the image has been chosen)
                     if(result.getData() != null){
                         //We will set the URI of the image to grant read permission for the encodeImage function
-                        imageUri = result.getData().getData();
+                        mImageUri = result.getData().getData();
                             //Call the avatar frame to put the image in.
-                            binding.postImage.setImageURI(imageUri);
+                            binding.postImage.setImageURI(mImageUri);
                             //Disable the text Add Image in the avatar frame when there are a image
                             binding.textAddImage.setVisibility(View.GONE);
                             //Then call the encoded image function
