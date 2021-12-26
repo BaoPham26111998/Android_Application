@@ -14,5 +14,7 @@ public class Post implements Serializable {
     public String description;
     public String like;
     public String comment;
+    public String postId;
+
 
     }
