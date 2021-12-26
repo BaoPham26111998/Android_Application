@@ -97,7 +97,7 @@
                 android:src="@drawable/dog"
                 android:scaleType="centerCrop"
                 android:layout_width="match_parent"
-                android:layout_height="225dp"/>
+                android:layout_height="355dp"/>
 
 <!--            post reaction area-->
             <LinearLayout

@@ -20,10 +20,8 @@ import com.example.android_application.models.Post;
 import com.example.android_application.models.Story;
 import com.example.android_application.ultilities.Constants;
 import com.example.android_application.ultilities.PreferenceManager;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +31,6 @@ public class home extends Fragment{
 
     RecyclerView storyRecycl, postRecycler;
     PreferenceManager preferenceManager;
-    private DatabaseReference databaseReference;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -68,7 +65,6 @@ public class home extends Fragment{
 
 
         FirebaseFirestore database = FirebaseFirestore.getInstance();
-        FirebaseStorage storage = FirebaseStorage.getInstance();
 
 
                 database.collection(Constants.COLLECTION_POST)
@@ -84,12 +80,13 @@ public class home extends Fragment{
                                     byte[] bytes = Base64.decode(queryDocumentSnapshot.getString(Constants.IMAGE), Base64.DEFAULT);
                                     Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                                     Post post = new Post();
-                                    post.postImg = queryDocumentSnapshot.getString("imageUrl");
+                                    post.postImg = queryDocumentSnapshot.getString(Constants.POST_IMAGE_URL);
                                     post.date = queryDocumentSnapshot.getDate(Constants.TIMESTAMP).toString();
                                     post.name = queryDocumentSnapshot.getString(Constants.NAME);
                                     post.imageProfile = bitmap;
                                     post.title = queryDocumentSnapshot.getString(Constants.POST_TITLE);
                                     post.description = queryDocumentSnapshot.getString(Constants.POST_DESCRIPTION);
+                                    post.postId = queryDocumentSnapshot.getId();
                                     post.like = queryDocumentSnapshot.getDouble(Constants.POST_LIKE).intValue() + " likes";
                                     post.comment = queryDocumentSnapshot.getDouble(Constants.POST_COMMENT).intValue() + " comments";
                                     posts.add(post);

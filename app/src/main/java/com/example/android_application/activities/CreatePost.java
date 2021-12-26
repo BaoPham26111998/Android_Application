@@ -18,7 +18,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.android_application.databinding.ActivityCreatePostBinding;
-import com.example.android_application.models.Upload;
 import com.example.android_application.ultilities.Constants;
 import com.example.android_application.ultilities.PreferenceManager;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -31,6 +30,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -40,7 +40,6 @@ public class CreatePost extends AppCompatActivity {
     private PreferenceManager preferenceManager;
     private Uri mImageUri;
     private String imageUrl;
-    private String imageId;
     private StorageReference storageReference;
     private DatabaseReference databaseReference;
     private StorageTask storageTask;
@@ -85,6 +84,7 @@ public class CreatePost extends AppCompatActivity {
             }
 
         });
+        binding.buttonReturn.setOnClickListener(v-> onBackPressed());
     }
 
     private void selectImage(){
@@ -124,20 +124,8 @@ public class CreatePost extends AppCompatActivity {
                                     fileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                         @Override
                                         public void onSuccess(Uri uri) {
-                                            String upLoadId = databaseReference.push().getKey();
                                             imageUrl = uri.toString();
-                                            Upload upload = new Upload(binding.inputTitle.getText().toString().trim(),
-                                                    uri.toString(),
-                                                    binding.inputDescription.getText().toString().trim(),
-                                                    preferenceManager.getString(Constants.IMAGE)
-                                            );
                                             upLoadToPostCollection();
-                                            databaseReference.child(upLoadId).setValue(upload).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                @Override
-                                                public void onSuccess(Void unused) {
-                                                    showToast("Image Uploaded");
-                                                }
-                                            });
                                         }
                                     });
 
@@ -158,10 +146,29 @@ public class CreatePost extends AppCompatActivity {
         }
     }
 
+        private void upLoadToPostCollection(){
+        FirebaseFirestore database2 = FirebaseFirestore.getInstance();
+            HashMap<String, Object> postArray = new HashMap<>();
+            postArray.put(Constants.POST_IMAGE_URL,imageUrl);
+            postArray.put(Constants.POST_TITLE,binding.inputTitle.getText().toString());
+            postArray.put(Constants.POST_DESCRIPTION,binding.inputDescription.getText().toString());
+            postArray.put(Constants.USER_ID,preferenceManager.getString(Constants.USER_ID));
+            postArray.put(Constants.NAME,preferenceManager.getString(Constants.NAME));
+            postArray.put(Constants.IMAGE,preferenceManager.getString(Constants.IMAGE));
+            postArray.put(Constants.POST_LIKE,0);
+            postArray.put(Constants.POST_COMMENT,0);
+            postArray.put(Constants.TIMESTAMP,new Date());
+            ArrayList<Object> arrayLike = new ArrayList<>();
+            postArray.put("userLiked", arrayLike);
+        database2.collection(Constants.COLLECTION_POST).add(postArray)
+                .addOnSuccessListener(task -> {
+                    showToast("Post added to firebase");
+                }).addOnFailureListener(task ->{
+                    showToast("Post add fail");
+        });
+        }
 
-
-
-//    private void createPost(){
+    //    private void createPost(){
 //        loading(true);
 //
 //        ArrayList list = new ArrayList();
@@ -192,49 +199,6 @@ public class CreatePost extends AppCompatActivity {
 //                });
 //        }
 
-        private void upLoadToPostCollection(){
-        FirebaseFirestore database2 = FirebaseFirestore.getInstance();
-            HashMap<String, Object> postArray = new HashMap<>();
-            postArray.put("imageUrl",imageUrl);
-            postArray.put(Constants.POST_TITLE,binding.inputTitle.getText().toString());
-            postArray.put(Constants.POST_DESCRIPTION,binding.inputDescription.getText().toString());
-            postArray.put(Constants.USER_ID,preferenceManager.getString(Constants.USER_ID));
-            postArray.put(Constants.NAME,preferenceManager.getString(Constants.NAME));
-            postArray.put(Constants.IMAGE,preferenceManager.getString(Constants.IMAGE));
-            postArray.put(Constants.POST_LIKE,0);
-            postArray.put(Constants.POST_COMMENT,0);
-            postArray.put(Constants.TIMESTAMP,new Date());
-            postArray.put(Constants.POST_IMAGE_ID,imageId);
-        database2.collection(Constants.COLLECTION_POST).add(postArray)
-                .addOnSuccessListener(task -> {
-                    showToast("Post add to firebase");
-                }).addOnFailureListener(task ->{
-                    showToast("Post add fail");
-        });
-        }
-
-//    private void upLoadImage(){
-//        SimpleDateFormat formatter =   new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss", Locale.CANADA);
-//        Date now = new Date();
-//        String filename = formatter.format(now);
-//        imageId = preferenceManager.getString(Constants.USER_ID)+" "+filename;
-//        storageReference = FirebaseStorage
-//                .getInstance()
-//                .getReference(imageId);
-//        showToast("Uploading image");
-//        storageReference.putFile(imageUri)
-//                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//                    @Override
-//                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                        showToast("Upload Image success fully");
-//                    }
-//                }).addOnFailureListener(new OnFailureListener() {
-//            @Override
-//            public void onFailure(@NonNull Exception e) {
-//                showToast("Upload image fail");
-//            }
-//        });
-//    }
 
     //After picked an image from device you will need to receive the result when perform the pick image action
     //The result is the image

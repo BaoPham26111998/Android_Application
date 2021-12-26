@@ -33,10 +33,12 @@ public class Constants {
     public static final String ARRAY_POST = "arrayPost";
     public static final String POST_TITLE= "postTitle";
     public static final String POST_DESCRIPTION = "postDescription";
-    public static final String POST_IMAGE = "postImage";
+    public static final String POST_IMAGE_URL = "postImageURL";
     public static final String POST_IMAGE_ID = "postImageId";
     public static final String POST_LIKE = "postLike";
     public static final String POST_COMMENT = "postComment";
+    public static final String POST_USER_LIKE = "userLiked";
+
 
     //Videos Info
     public static final String VIDEO_ID = "id";
