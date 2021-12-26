@@ -20,6 +20,7 @@ import com.example.android_application.models.Post;
 import com.example.android_application.models.Story;
 import com.example.android_application.ultilities.Constants;
 import com.example.android_application.ultilities.PreferenceManager;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
@@ -32,6 +33,8 @@ public class home extends Fragment{
 
     RecyclerView storyRecycl, postRecycler;
     PreferenceManager preferenceManager;
+    private DatabaseReference databaseReference;
+
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -68,35 +71,36 @@ public class home extends Fragment{
         FirebaseStorage storage = FirebaseStorage.getInstance();
 
 
-        database.collection(Constants.COLLECTION_POST)
-                .get()
-                .addOnCompleteListener(task ->{
+                database.collection(Constants.COLLECTION_POST)
+                        .get()
+                        .addOnCompleteListener(task -> {
 
-                    if (task.isSuccessful() && task.getResult() != null){
-                        postRecycler = root.findViewById(R.id.post_recycler);
-                        postRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
-                        postRecycler.setHasFixedSize(true);
-                        List<Post> posts = new ArrayList<>();
-                        for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
-                            byte[] bytes = Base64.decode(queryDocumentSnapshot.getString(Constants.IMAGE), Base64.DEFAULT);
-                            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                            storage.getReference(queryDocumentSnapshot.getString(Constants.POST_IMAGE_ID));
-                                Post post = new Post();
-//                                post.postImg = storage.
-                                post.date = queryDocumentSnapshot.getDate(Constants.TIMESTAMP).toString();
-                                post.name = queryDocumentSnapshot.getString(Constants.NAME);
-                                post.imageProfile = bitmap;
-                                post.title = queryDocumentSnapshot.getString(Constants.POST_TITLE);
-                                post.description = queryDocumentSnapshot.getString(Constants.POST_DESCRIPTION);
-                                post.like = queryDocumentSnapshot.getDouble(Constants.POST_LIKE).intValue()+" likes";
-                                post.comment = queryDocumentSnapshot.getDouble(Constants.POST_COMMENT).intValue()+ " comments";
-                                posts.add(post);
+                            if (task.isSuccessful() && task.getResult() != null) {
+                                postRecycler = root.findViewById(R.id.post_recycler);
+                                postRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
+                                postRecycler.setHasFixedSize(true);
+                                List<Post> posts = new ArrayList<>();
+                                for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
+                                    byte[] bytes = Base64.decode(queryDocumentSnapshot.getString(Constants.IMAGE), Base64.DEFAULT);
+                                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                                    Post post = new Post();
+                                    post.postImg = queryDocumentSnapshot.getString("imageUrl");
+                                    post.date = queryDocumentSnapshot.getDate(Constants.TIMESTAMP).toString();
+                                    post.name = queryDocumentSnapshot.getString(Constants.NAME);
+                                    post.imageProfile = bitmap;
+                                    post.title = queryDocumentSnapshot.getString(Constants.POST_TITLE);
+                                    post.description = queryDocumentSnapshot.getString(Constants.POST_DESCRIPTION);
+                                    post.like = queryDocumentSnapshot.getDouble(Constants.POST_LIKE).intValue() + " likes";
+                                    post.comment = queryDocumentSnapshot.getDouble(Constants.POST_COMMENT).intValue() + " comments";
+                                    posts.add(post);
+                                }
+                                PostAdapter postAdapter = new PostAdapter(posts);
+                                postRecycler.setAdapter(postAdapter);
                             }
-                        PostAdapter postAdapter = new PostAdapter(posts);
-                        postRecycler.setAdapter(postAdapter);
-                        }
-                });
+                        });
 
         return root;
     }
+
+
 }

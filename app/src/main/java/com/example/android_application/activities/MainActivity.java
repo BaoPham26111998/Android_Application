@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     FirebaseFirestore db;
     private AdapterVideo adapterVideo;
     private RecyclerView recyclerView;
+
     //Because view binding enabled, binding for each XML file will be generate automatically
 
     @Override
@@ -69,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
         preferenceManager = new PreferenceManager(getApplicationContext());
         setContentView(binding.getRoot());
 
+
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_home,
                 R.id.navigation_dashboard,
@@ -88,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
         binding.imageSignOut.setOnClickListener(v-> logOut());
         binding.fabNewPost.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(),CreatePost.class)));
         binding.imageChat.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(),MainChat.class)));
+        binding.imageProfile.setOnClickListener( v-> startActivity(new Intent(getApplicationContext(), AccountProfileActivity.class)));
     }
 
     private void loadUserInfo() {

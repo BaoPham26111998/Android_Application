@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.android_application.databinding.PostItemBinding;
 import com.example.android_application.models.Post;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -45,7 +46,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             binding = postItemBinding;
         }
         void SetPostData(Post post){
-            binding.postImage.setImageURI(post.postImg);
+            Picasso.get().load(post.postImg).into(binding.postImage);
             binding.profileImage.setImageBitmap(post.imageProfile);
             binding.postTitle.setText(post.title);
             binding.postDescription.setText(post.description);
