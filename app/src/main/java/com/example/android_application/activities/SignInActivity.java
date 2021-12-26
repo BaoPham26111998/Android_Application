@@ -11,6 +11,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.android_application.databinding.ActivitySigninBinding;
 import com.example.android_application.ultilities.Constants;
 import com.example.android_application.ultilities.PreferenceManager;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -19,7 +21,8 @@ public class SignInActivity extends AppCompatActivity {
 
     private ActivitySigninBinding binding;
     private PreferenceManager preferenceManager;
-
+    private FirebaseAuth mAuth;
+    private FirebaseUser firebaseUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +32,9 @@ public class SignInActivity extends AppCompatActivity {
         preferenceManager = new PreferenceManager(getApplicationContext());
         setContentView(binding.getRoot());
         setListeners();
+
     }
+
 
     private void setListeners(){
         //Go to sign up screen when user click on the sign button
@@ -41,10 +46,9 @@ public class SignInActivity extends AppCompatActivity {
                 signIn();
             }
         });
-        // for testing dummy data in the database un-comment this line and firestoreDummyData() function below
-        //binding.buttonSignIn.setOnClickListener(v -> firestoreDummyData());
-
     }
+
+
     //Set up loading animation
     private void loading(Boolean isloading){
         if(isloading){
@@ -62,31 +66,33 @@ public class SignInActivity extends AppCompatActivity {
     private void signIn(){
         loading(true);
         FirebaseFirestore database = FirebaseFirestore.getInstance();
-        //Get data from users collection database and check the login condition
-        database.collection(Constants.COLLECTION_USERS)
-                //Compare input information and information from the firestore to check if the user is legit to loggin
-                .whereEqualTo(Constants.EMAIL, binding.inputEmail.getText().toString())
-                .whereEqualTo(Constants.PASSWORD, binding.inputPassword.getText().toString())
-                .get()
+        mAuth = FirebaseAuth.getInstance();
+        mAuth.signInWithEmailAndPassword(binding.inputEmail.getText().toString(),binding.inputPassword.getText().toString())
                 .addOnCompleteListener(task -> {
-                    // When LOGIN successfully we will need to save or define some values for future use
-                    // such as define sign-in status, save the user-id, user name and their avatar
-                    if (task.isSuccessful() && task.getResult() != null
-                            && task.getResult().getDocuments().size() > 0){
-                        DocumentSnapshot documentSnapshot = task.getResult().getDocuments().get(0);
-                        preferenceManager.putBoolean(Constants.IS_SIGNED_IN, true);
-                        preferenceManager.putString(Constants.USER_ID, documentSnapshot.getId());
-                        preferenceManager.putString(Constants.NAME, documentSnapshot.getString(Constants.NAME));
-                        preferenceManager.putString(Constants.IMAGE, documentSnapshot.getString(Constants.IMAGE));
-                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(intent);
-                    } else {
-                        loading(false);
-                        showToast("Unable to sign in");
-                    }
+
+                    firebaseUser = mAuth.getCurrentUser();
+                    database.collection(Constants.COLLECTION_USERS).document(mAuth.getUid())
+                            .get()
+                            .addOnCompleteListener(task1 -> {
+                                if (task1.isSuccessful() && task1.getResult() != null){
+                                    DocumentSnapshot documentSnapshot = task1.getResult();
+                                    preferenceManager.putBoolean(Constants.IS_SIGNED_IN, true);
+                                    preferenceManager.putString(Constants.USER_ID, documentSnapshot.getId());
+                                    preferenceManager.putString(Constants.NAME, documentSnapshot.getString(Constants.NAME));
+                                    preferenceManager.putString(Constants.IMAGE, documentSnapshot.getString(Constants.IMAGE));
+                                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    startActivity(intent);
+                                } else {
+                                    loading(false);
+                                    showToast("Unable to sign in");
+                                }
+                            });
                 });
     }
+
+
+
 
     // Set up the application notification for UI
     private void showToast(String message) {
@@ -108,21 +114,4 @@ public class SignInActivity extends AppCompatActivity {
             return true;
         }
     }
-
-    // Add dummy data to firestore database to test connection between device and firestore
-//    private void firestoreDummyData(){
-//        FirebaseFirestore database = FirebaseFirestore.getInstance();
-//        HashMap<String, Object> data = new HashMap<>();
-//
-//        data.put("first_name", "bao");
-//        data.put("last_name", "pham");
-//        database.collection("users")
-//                .add(data)
-//                .addOnSuccessListener(documentReference -> {
-//                    Toast.makeText(getApplicationContext(), "Data successfully inserted", Toast.LENGTH_SHORT).show();
-//                })
-//                .addOnFailureListener(exception -> {
-//                    Toast.makeText(getApplicationContext(), exception.getMessage(),Toast.LENGTH_SHORT).show();
-//                });
-//    }
 }

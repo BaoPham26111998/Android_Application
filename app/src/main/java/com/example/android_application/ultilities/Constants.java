@@ -5,6 +5,7 @@ public class Constants {
 
     // Fire store collection
     public static final String COLLECTION_USERS = "users";
+    public  static final String COLLECTION_POST = "posts";
 
     //User info
     public static final String NAME = "name";
@@ -28,4 +29,26 @@ public class Constants {
     public static final String RECEIVER_ID= "receiverId";
     public static final String MESSAGE = "message";
     public static final String TIMESTAMP = "timestamp";
+
+    public static final String ARRAY_POST = "arrayPost";
+    public static final String POST_TITLE= "postTitle";
+    public static final String POST_DESCRIPTION = "postDescription";
+    public static final String POST_IMAGE = "postImage";
+    public static final String POST_IMAGE_ID = "postImageId";
+
+    //Videos Info
+    public static final String VIDEO_ID = "id";
+    public static final String VIDEO_TITLE = "title";
+    public static final String VIDEO_URL = "videoUrl";
+    public static final String VIDEO_TIMESTAMP = "timestamp";
+    public static final String VIDEO_CREATOR = "user";
+
+    //Current chat messenger
+    public static final String KEY_COLLECTION_COVERSASION = "conversasions";
+    public static final String KEY_SENDER_NAME = "senderName";
+    public static final String KEY_RECEIVER_NAME = "receiverName";
+    public static final String KEY_SENDER_IMAGE = "senderImage";
+    public static final String KEY_RECEIVER_IMAGE = "receiverImage";
+    public static final String KEY_LAST_MESSAGE = "lastMessage";
+
 }

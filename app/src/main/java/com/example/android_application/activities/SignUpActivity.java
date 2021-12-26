@@ -18,11 +18,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.android_application.databinding.ActivitySignUpBinding;
 import com.example.android_application.ultilities.Constants;
 import com.example.android_application.ultilities.PreferenceManager;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class SignUpActivity extends AppCompatActivity {
@@ -30,6 +35,9 @@ public class SignUpActivity extends AppCompatActivity {
     private ActivitySignUpBinding binding;
     private PreferenceManager preferenceManager;
     private String encodedImage;
+    private FirebaseAuth mAuth;
+    private FirebaseUser firebaseUser;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +48,7 @@ public class SignUpActivity extends AppCompatActivity {
         // Call preferenceManager to store the data information as string
         preferenceManager = new PreferenceManager(getApplicationContext());
         setListeners();
+        mAuth = FirebaseAuth.getInstance();
     }
 
     private void setListeners() {
@@ -70,35 +79,70 @@ public class SignUpActivity extends AppCompatActivity {
         loading(true);
         // Call Firebase firestore function
         FirebaseFirestore database = FirebaseFirestore.getInstance();
-        //Set up user information to upload to the firebase
-        HashMap<String, Object> user = new HashMap<>();
-        user.put(Constants.NAME,binding.inputName.getText().toString());
-        user.put(Constants.EMAIL,binding.inputEmail.getText().toString());
-        user.put(Constants.PASSWORD,binding.inputPassword.getText().toString());
-        user.put(Constants.IMAGE,encodedImage);
-
-        //Add input data to firestore collection
-        database.collection(Constants.COLLECTION_USERS)
-                //Upload user information to firestore database
-                .add(user)
-                // When UPLOAD DATA successfully we will need to save or define some values for future use
-                // such as define sign-in status, save the user-id, user name and their avatar
-                .addOnSuccessListener(documentReference -> {
-                    loading(false);
-                    //Save the data to the preference manager when login successfully for the future use
-                    preferenceManager.putBoolean(Constants.IS_SIGNED_IN,true);
-                    preferenceManager.putString(Constants.USER_ID,documentReference.getId());
-                    preferenceManager.putString(Constants.NAME,binding.inputName.getText().toString());
-                    preferenceManager.putString(Constants.IMAGE,encodedImage);
-                    Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
-                })
-                // Throw exception when fail to upload to the firebase
-                .addOnFailureListener(exception -> {
-                    loading(false);
-                    showToast(exception.getMessage());
+        mAuth.createUserWithEmailAndPassword(binding.inputEmail.getText().toString(),binding.inputPassword.getText().toString())
+                .addOnCompleteListener((task -> {
+                    showToast("Account created");
+                    if (task.isSuccessful()){
+                        loading(false);
+                        String userId = mAuth.getCurrentUser().getUid();
+                        DocumentReference documentReference = database.collection(Constants.COLLECTION_USERS).document(userId);
+                        HashMap<String, Object> user = new HashMap<>();
+                        user.put(Constants.NAME,binding.inputName.getText().toString());
+                        user.put(Constants.EMAIL,binding.inputEmail.getText().toString());
+                        user.put(Constants.IMAGE,encodedImage);
+                        ArrayList<Object> arrayPost = new ArrayList<>();
+                        user.put("arrayPost", arrayPost);
+                        documentReference.set(user).addOnSuccessListener((OnSuccessListener) (aVoid) -> {
+                            preferenceManager.putBoolean(Constants.IS_SIGNED_IN,true);
+                            preferenceManager.putString(Constants.NAME,binding.inputName.getText().toString());
+                            preferenceManager.putString(Constants.IMAGE,encodedImage);
+                            preferenceManager.putString(Constants.USER_ID,documentReference.getId());
+                            Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
+                        })
+                                .addOnFailureListener(exception -> {
+                                    loading(false);
+                                    showToast(exception.getMessage());
                 });
+                    }else {
+                        showToast("Create email error");
+                    }
+                }));
+
+        //Set up user information to upload to the firebase
+//        HashMap<String, Object> user = new HashMap<>();
+//        user.put(Constants.NAME,binding.inputName.getText().toString());
+//        user.put(Constants.EMAIL,binding.inputEmail.getText().toString());
+//        user.put(Constants.PASSWORD,binding.inputPassword.getText().toString());
+//        user.put(Constants.IMAGE,encodedImage);
+//        ArrayList<Object> arrayPost = new ArrayList<>();
+//        user.put("arrayPost", arrayPost);
+//        //Add input data to firestore collection
+//        database.collection(Constants.COLLECTION_USERS)
+//                //Upload user information to firestore database
+//                .add(user)
+//                // When UPLOAD DATA successfully we will need to save or define some values for future use
+//                // such as define sign-in status, save the user-id, user name and their avatar
+//                .addOnSuccessListener(documentReference -> {
+//                    loading(false);
+//                    //Save the data to the preference manager when login successfully for the future use
+//                    preferenceManager.putBoolean(Constants.IS_SIGNED_IN,true);
+//                    mAuth.createUserWithEmailAndPassword(binding.inputEmail.getText().toString(),binding.inputPassword.getText().toString());
+//                    preferenceManager.putString(Constants.USER_ID,documentReference.getId());
+//                    preferenceManager.putString(Constants.NAME,binding.inputName.getText().toString());
+//                    preferenceManager.putString(Constants.IMAGE,encodedImage);
+//                    Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+//                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//                    startActivity(intent);
+//                })
+//                // Throw exception when fail to upload to the firebase
+//                .addOnFailureListener(exception -> {
+//                    loading(false);
+//                    showToast(exception.getMessage());
+//                });
+
+
     }
 
     //Convert image from JPEG to Bytes by using bitmap and Android Base 64 encoder library to send to the database
