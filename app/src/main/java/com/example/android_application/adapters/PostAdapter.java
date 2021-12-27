@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.android_application.databinding.PostItemBinding;
 import com.example.android_application.models.Post;
 import com.example.android_application.ultilities.Constants;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -18,7 +19,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 
@@ -97,6 +97,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 
 
             binding.feedsPostLiked.setOnClickListener(v -> {
+                System.out.println("unlike");
                 unliked(post);
                 binding.feedsPostLike.setVisibility(View.VISIBLE);
                 binding.feedsPostLiked.setVisibility(View.GONE);
@@ -122,16 +123,21 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         }
 
         void unliked(Post post){
+
             FirebaseAuth mAuth = FirebaseAuth.getInstance();
             firebaseUser = mAuth.getCurrentUser();
             FirebaseFirestore database = FirebaseFirestore.getInstance();
             ArrayList list = new ArrayList();
-            HashMap<String, Object> postArray = new HashMap<>();
-            postArray.put(Constants.USER_ID,mAuth.getUid());
-            list.add(postArray);
+            list.add(mAuth.getUid());
             database.collection(Constants.COLLECTION_POST)
                     .document(post.postId)
-                    .update("userLiked",FieldValue.arrayRemove(list.toArray()));
+                    .update("userLiked",FieldValue.arrayRemove(list.toArray()))
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            System.out.println("unlike success");
+                        }
+                    });
 
         }
     }
