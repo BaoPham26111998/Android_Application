@@ -66,6 +66,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             binding.profileName.setText(post.name);
             binding.profileDate.setText(post.date);
             binding.feedsCommentCount.setText(post.comment);
+            binding.feedsLikesCount.setText(post.likeCount);
             FirebaseFirestore database = FirebaseFirestore.getInstance();
 
             FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -78,16 +79,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                             List<String> userList = (List<String>) documentSnapshot.get(Constants.POST_USER_LIKE);
                             Integer likeLength = userList.size();
                             binding.feedsLikesCount.setText(likeLength.toString() + " likes");
-                            System.out.println(userList);
                             String userId = mAuth.getUid();
-                            if (userList.contains(mAuth.getUid())){
-
+                            if (userList.contains(userId)){
                                 System.out.println(true);
                                 binding.feedsPostLike.setVisibility(View.GONE);
                                 binding.feedsPostLiked.setVisibility(View.VISIBLE);
                             }else {
                                 System.out.println(false);
-                                System.out.println("userId="+userId);
                                 binding.feedsPostLike.setVisibility(View.VISIBLE);
                                 binding.feedsPostLiked.setVisibility(View.GONE);
                             }

@@ -20,14 +20,12 @@ import com.example.android_application.ultilities.PreferenceManager;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 public class MainChat extends AppCompatActivity implements ConversasionListener {
@@ -148,25 +146,6 @@ public class MainChat extends AppCompatActivity implements ConversasionListener 
                 .addOnFailureListener(e -> showToast("Unable to get Token"));
     }
 
-    //logout function
-    private void logOut(){
-        showToast("Signing out");
-        FirebaseFirestore database = FirebaseFirestore.getInstance();
-        DocumentReference documentReference =
-                database.collection(Constants.COLLECTION_USERS).document(
-                        preferenceManager.getString(Constants.USER_ID)
-                );
-        HashMap<String, Object> updates = new HashMap<>();
-        //delete the token after user logout on the database
-        updates.put(Constants.FCM_TOKEN, FieldValue.delete());
-        documentReference.update(updates)
-                .addOnSuccessListener(unused -> {
-                    preferenceManager.clear();
-                    startActivity(new Intent(getApplicationContext(), SignInActivity.class));
-                    finish();
-                })
-                .addOnFailureListener(e -> showToast("Unable to logout please try again later!"));
-    }
 
     @Override
     public void onConversasionClicked(User user) {
