@@ -16,47 +16,6 @@
         android:largeHeap="true"
         >
         <activity
-
-            android:name="com.dsphotoeditor.sdk.activity.DsPhotoEditorActivity"
-
-            android:screenOrientation="portrait"
-
-            android:theme="@android:style/Theme.Holo.NoActionBar" />
-
-        <activity
-
-            android:name="com.dsphotoeditor.sdk.activity.DsPhotoEditorStickerActivity"
-
-            android:screenOrientation="portrait"
-
-            android:theme="@android:style/Theme.Holo.NoActionBar" />
-
-        <activity
-
-            android:name="com.dsphotoeditor.sdk.activity.DsPhotoEditorTextActivity"
-
-            android:screenOrientation="portrait"
-
-            android:theme="@android:style/Theme.Holo.NoActionBar"
-
-            android:windowSoftInputMode="adjustPan" />
-
-        <activity
-
-            android:name="com.dsphotoeditor.sdk.activity.DsPhotoEditorCropActivity"
-
-            android:screenOrientation="portrait"
-
-            android:theme="@android:style/Theme.Holo.NoActionBar" />
-
-        <activity
-
-            android:name="com.dsphotoeditor.sdk.activity.DsPhotoEditorDrawActivity"
-
-            android:screenOrientation="portrait"
-
-            android:theme="@android:style/Theme.Holo.NoActionBar" />
-        <activity
             android:name=".PhotoEditingActivity"
             android:exported="false" />
         <activity
