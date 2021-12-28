@@ -15,6 +15,6 @@ public class Post implements Serializable {
     public String like;
     public String comment;
     public String postId;
-
+    public String likeCount;
 
     }

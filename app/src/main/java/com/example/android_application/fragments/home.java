@@ -37,13 +37,13 @@ public class home extends Fragment{
 
     RecyclerView storyRecycl, postRecycler;
     PreferenceManager preferenceManager;
-
+    private PostAdapter postAdapter;
+    List<Post> posts = new ArrayList<>();
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_home, container, false);
         preferenceManager = new PreferenceManager(getContext());
-
         storyRecycl = root.findViewById(R.id.story_recycler);
 
         Story[] Storys = new Story[]{
@@ -69,8 +69,42 @@ public class home extends Fragment{
 
         //============================ Post area
 
-
         FirebaseFirestore database = FirebaseFirestore.getInstance();
+
+        postRecycler = root.findViewById(R.id.post_recycler);
+        postRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
+        postRecycler.setHasFixedSize(true);
+
+        database.collection(Constants.COLLECTION_POST)
+                .get()
+                .addOnCompleteListener(task -> {
+
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        postRecycler = root.findViewById(R.id.post_recycler);
+                        postRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
+                        postRecycler.setHasFixedSize(true);
+
+                        for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
+
+                            byte[] bytes = Base64.decode(queryDocumentSnapshot.getString(Constants.IMAGE), Base64.DEFAULT);
+                            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                            Post post = new Post();
+                            post.postImg = queryDocumentSnapshot.getString(Constants.POST_IMAGE_URL);
+                            post.date = queryDocumentSnapshot.getDate(Constants.TIMESTAMP).toString();
+                            post.name = queryDocumentSnapshot.getString(Constants.NAME);
+                            post.imageProfile = bitmap;
+                            post.title = queryDocumentSnapshot.getString(Constants.POST_TITLE);
+                            post.description = queryDocumentSnapshot.getString(Constants.POST_DESCRIPTION);
+                            post.postId = queryDocumentSnapshot.getId();
+                            List<String> userList = (List<String>) queryDocumentSnapshot.get(Constants.POST_USER_LIKE);
+                            Integer likeLength = userList.size();
+                            post.likeCount = likeLength.toString() +" likes";
+                            post.comment = queryDocumentSnapshot.getDouble(Constants.POST_COMMENT).intValue() + " comments";
+                            posts.add(post);
+                        }
+
+                    }
+                });
 
 
                 database.collection(Constants.COLLECTION_POST)
@@ -81,67 +115,51 @@ public class home extends Fragment{
                                     Log.w("Listen error",error);
                                     return;
                             }
+
                                 for(DocumentChange documentChange : snapshot.getDocumentChanges()){
-                                    List<Post> posts = new ArrayList<>();
-                                    postRecycler = root.findViewById(R.id.post_recycler);
-                                    postRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
-                                    postRecycler.setHasFixedSize(true);
-                                    byte[] bytes = Base64.decode(documentChange.getDocument().getString(Constants.IMAGE), Base64.DEFAULT);
-                                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                                    Post post = new Post();
-
-                                    post.postImg = documentChange.getDocument().getString(Constants.POST_IMAGE_URL);
-                                    post.date = documentChange.getDocument().getDate(Constants.TIMESTAMP).toString();
-                                    post.name = documentChange.getDocument().getString(Constants.NAME);
-                                    post.imageProfile = bitmap;
-                                    post.title =documentChange.getDocument().getString(Constants.POST_TITLE);
-                                    post.description = documentChange.getDocument().getString(Constants.POST_DESCRIPTION);
-                                    post.postId = documentChange.getDocument().getId();
-
                                     if (documentChange.getType() == DocumentChange.Type.MODIFIED){
-                                        post.like =documentChange.getDocument().getDouble(Constants.POST_LIKE).intValue() + " likes";
-                                        post.comment = documentChange.getDocument().getDouble(Constants.POST_COMMENT).intValue() + " comments";
-                                        posts.add(post);
+                                        List<String> userList = (List<String>) documentChange.getDocument().get(Constants.POST_USER_LIKE);
+                                        Integer likeLength = userList.size();
+                                        System.out.println(posts.size());
+                                        for(int i=0; i<posts.size();i++){
+                                            String postId = documentChange.getDocument().getId();
+                                            if(posts.get(i).postId.equals(postId)){
+                                                System.out.println(postId);
+                                                posts.get(i).likeCount = likeLength.toString() +" likes";
+                                                System.out.println(posts.get(i).likeCount);
+
+                                                break;
+                                            }
+                                        }
+
+//                                    byte[] bytes = Base64.decode(documentChange.getDocument().getString(Constants.IMAGE), Base64.DEFAULT);
+//                                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+//                                    Post post = new Post();
+//                                        post.postImg = documentChange.getDocument().getString(Constants.POST_IMAGE_URL);
+//                                        post.date = documentChange.getDocument().getDate(Constants.TIMESTAMP).toString();
+//                                        post.name = documentChange.getDocument().getString(Constants.NAME);
+//                                        post.imageProfile = bitmap;
+//                                        post.title =documentChange.getDocument().getString(Constants.POST_TITLE);
+//                                        post.description = documentChange.getDocument().getString(Constants.POST_DESCRIPTION);
+//                                        post.postId = documentChange.getDocument().getId();
+//                                        List<String> userList = (List<String>) documentChange.getDocument().get(Constants.POST_USER_LIKE);
+//                                        Integer likeLength = userList.size();
+//                                        post.likeCount = likeLength.toString() +" likes";
+//                                        post.comment = documentChange.getDocument().getDouble(Constants.POST_COMMENT).intValue() + " comments";
+//                                        posts.add(post);
                                     }
-                                    PostAdapter postAdapter = new PostAdapter(posts);
-                                    postRecycler.setAdapter(postAdapter);
 
+//                                    PostAdapter postAdapter = new PostAdapter(posts);
+//                                    postRecycler.setAdapter(postAdapter);
                                 }
+                                postAdapter.notifyDataSetChanged();
                             }
                         });
 
-        database.collection(Constants.COLLECTION_POST)
-                        .get()
-                        .addOnCompleteListener(task -> {
 
-                            if (task.isSuccessful() && task.getResult() != null) {
-                                postRecycler = root.findViewById(R.id.post_recycler);
-                                postRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
-                                postRecycler.setHasFixedSize(true);
-                                List<Post> posts = new ArrayList<>();
-                                for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
-
-                                    byte[] bytes = Base64.decode(queryDocumentSnapshot.getString(Constants.IMAGE), Base64.DEFAULT);
-                                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                                    Post post = new Post();
-                                    post.postImg = queryDocumentSnapshot.getString(Constants.POST_IMAGE_URL);
-                                    post.date = queryDocumentSnapshot.getDate(Constants.TIMESTAMP).toString();
-                                    post.name = queryDocumentSnapshot.getString(Constants.NAME);
-                                    post.imageProfile = bitmap;
-                                    post.title = queryDocumentSnapshot.getString(Constants.POST_TITLE);
-                                    post.description = queryDocumentSnapshot.getString(Constants.POST_DESCRIPTION);
-                                    post.postId = queryDocumentSnapshot.getId();
-                                    post.like = queryDocumentSnapshot.getDouble(Constants.POST_LIKE).intValue() + " likes";
-                                    post.comment = queryDocumentSnapshot.getDouble(Constants.POST_COMMENT).intValue() + " comments";
-                                    posts.add(post);
-                                }
-                                PostAdapter postAdapter = new PostAdapter(posts);
-                                postRecycler.setAdapter(postAdapter);
-                            }
-                        });
+        postAdapter = new PostAdapter(posts);
+        postRecycler.setAdapter(postAdapter);
 
         return root;
     }
-
-
 }
