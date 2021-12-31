@@ -5,11 +5,16 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Base64;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.android_application.databinding.ActivityAccountProfileBinding;
 import com.example.android_application.ultilities.Constants;
 import com.example.android_application.ultilities.PreferenceManager;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 
 public class AccountProfileActivity extends AppCompatActivity {
@@ -27,12 +32,27 @@ public class AccountProfileActivity extends AppCompatActivity {
         setListeners();
     }
     private void loadUserInfo() {
+        FirebaseFirestore database = FirebaseFirestore.getInstance();
+        database.collection(Constants.COLLECTION_POST)
+                .whereEqualTo(Constants.USER_ID,preferenceManager.getString(Constants.USER_ID))
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()){
+
+                            Integer postLength = task.getResult().size();
+                            binding.txtPosts.setText(postLength.toString());
+                        }
+                    }
+                });
         //Load user name
-        binding.textName.setText(preferenceManager.getString(Constants.NAME));
+        binding.profileName.setText(preferenceManager.getString(Constants.NAME));
         //Load image
         byte[] bytes = Base64.decode(preferenceManager.getString(Constants.IMAGE), Base64.DEFAULT);
         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
         binding.imageProfile.setImageBitmap(bitmap);
+        binding.displayName.setText(preferenceManager.getString(Constants.NAME));
     }
     private void setListeners(){
         //log out by click in to the icon on the top right corner
