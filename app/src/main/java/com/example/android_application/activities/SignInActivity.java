@@ -75,6 +75,7 @@ public class SignInActivity extends AppCompatActivity {
                             .get()
                             .addOnCompleteListener(task1 -> {
                                 if (task1.isSuccessful() && task1.getResult() != null){
+                                    loading(false);
                                     DocumentSnapshot documentSnapshot = task1.getResult();
                                     preferenceManager.putBoolean(Constants.IS_SIGNED_IN, true);
                                     preferenceManager.putString(Constants.USER_ID, documentSnapshot.getId());

@@ -82,6 +82,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                             String userId = mAuth.getUid();
                             if (userList.contains(userId)){
                                 System.out.println(true);
+
                                 binding.feedsPostLike.setVisibility(View.GONE);
                                 binding.feedsPostLiked.setVisibility(View.VISIBLE);
                             }else {
