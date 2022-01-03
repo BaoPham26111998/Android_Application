@@ -276,14 +276,14 @@
         android:id="@+id/relative1">
 
         <GridView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:numColumns="3"
             android:id="@+id/gridview1"
-            android:verticalSpacing="1dp"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
             android:horizontalSpacing="1dp"
+            android:numColumns="3"
             android:stretchMode="columnWidth"
-            android:gravity="center">
+            android:verticalSpacing="1dp">
 
         </GridView>
 
