@@ -4,10 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".activities.ProfileAccountPostClicked">
 
     <androidx.cardview.widget.CardView
-       app:cardElevation="5dp"
+        app:cardElevation="5dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#fff">
@@ -17,7 +18,7 @@
             android:paddingBottom="10dp"
             android:orientation="vertical">
 
-<!--            Top profile info area-->
+            <!--            Top profile info area-->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -33,11 +34,10 @@
                     android:src="@drawable/dog"/>
 
                 <RelativeLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="313dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:paddingLeft="@dimen/_10sdp"
-                    >
+                    android:paddingLeft="@dimen/_10sdp">
 
                     <TextView
                         android:id="@+id/profile_name"
@@ -55,23 +55,21 @@
                         android:text="ggg"
                         android:textSize="11dp" />
 
-                    <TextView
-                        android:id="@+id/profile_option"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentTop="true"
-                        android:layout_alignParentRight="true"
-                        android:text="&#8942;"
-                        android:textAppearance="?android:textAppearanceLarge" />
+
 
                 </RelativeLayout>
 
-
-
+                <com.mikhaellopez.circularimageview.CircularImageView
+                    android:id="@+id/returnImage"
+                    android:layout_width="47dp"
+                    android:layout_height="35dp"
+                    android:layout_gravity="right"
+                    android:src="@drawable/ic_back"
+                    app:civ_border_width="2dp" />
 
             </LinearLayout>
 
-<!--            post description text-->
+            <!--            post description text-->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -94,7 +92,7 @@
                     android:text="text here"/>
             </LinearLayout>
 
-<!--            Image Area-->
+            <!--            Image Area-->
             <ImageView
                 android:id="@+id/post_image"
                 android:src="@drawable/dog"
@@ -102,7 +100,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="355dp"/>
 
-<!--            post reaction area-->
+            <!--            post reaction area-->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -152,7 +150,7 @@
                 android:layout_marginTop="5dp"
                 android:background="@color/cardview_light_background"/>
 
-<!--            count area new design-->
+            <!--            count area new design-->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
