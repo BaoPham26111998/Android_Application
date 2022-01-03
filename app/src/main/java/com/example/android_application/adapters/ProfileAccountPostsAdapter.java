@@ -8,19 +8,22 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
 import com.example.android_application.R;
+import com.example.android_application.models.Post;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class ProfileAccountPostsAdapter extends BaseAdapter {
-    ArrayList<String> imageUrls = new ArrayList<String>();
+    List<String> imageUrls;
+    List<Post> accountProfilePostList ;
     private LayoutInflater layoutInflater;
-    private Context context;
 
-    public ProfileAccountPostsAdapter(ArrayList<String> imageUrls, Context context) {
+    public ProfileAccountPostsAdapter(List<Post> accountProfilePostList,
+                                      List<String> imageUrls,
+                                      Context context) {
         this.imageUrls = imageUrls;
-        this.context = context;
         this.layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.accountProfilePostList = accountProfilePostList;
     }
 
     @Override
@@ -45,6 +48,7 @@ public class ProfileAccountPostsAdapter extends BaseAdapter {
         }
         ImageView postImage = convertView.findViewById(R.id.postImageView);
         Picasso.get().load(imageUrls.get(position)).into(postImage);
+
 
 
         return convertView;

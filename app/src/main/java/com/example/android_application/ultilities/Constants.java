@@ -30,6 +30,7 @@ public class Constants {
     public static final String MESSAGE = "message";
     public static final String TIMESTAMP = "timestamp";
 
+    public static final String POST = "post";
     public static final String ARRAY_POST = "arrayPost";
     public static final String POST_TITLE= "postTitle";
     public static final String POST_DESCRIPTION = "postDescription";

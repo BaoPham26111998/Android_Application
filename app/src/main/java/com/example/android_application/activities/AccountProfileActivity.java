@@ -1,11 +1,12 @@
 package com.example.android_application.activities;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Base64;
 import android.view.View;
-import android.widget.GridView;
+import android.widget.AdapterView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -13,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.android_application.adapters.ProfileAccountPostsAdapter;
 import com.example.android_application.databinding.ActivityAccountProfileBinding;
+import com.example.android_application.models.Post;
 import com.example.android_application.ultilities.Constants;
 import com.example.android_application.ultilities.PreferenceManager;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -22,13 +24,14 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class AccountProfileActivity extends AppCompatActivity {
-    GridView gridView;
     private ActivityAccountProfileBinding binding;
     private PreferenceManager preferenceManager;
-    ArrayList<String> images = new ArrayList<String>();
+    List<String> images = new ArrayList<String>();
+    List<Post> posts = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +41,9 @@ public class AccountProfileActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         loadUserInfo();
         setListeners();
-        gridView = binding.gridview1;
         setPhotoGridView();
+
+
     }
     private void loadUserInfo() {
         FirebaseFirestore database = FirebaseFirestore.getInstance();
@@ -50,7 +54,6 @@ public class AccountProfileActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()){
-
                             Integer postLength = task.getResult().size();
                             binding.txtPosts.setText(postLength.toString());
                         }
@@ -67,6 +70,18 @@ public class AccountProfileActivity extends AppCompatActivity {
     private void setListeners(){
         //log out by click in to the icon on the top right corner
         binding.backButton.setOnClickListener(v -> onBackPressed());
+        binding.gridview1.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                System.out.println(posts.get(position).postId);
+                String postId = posts.get(position).postId;
+                String postImageUrl = posts.get(position).postImg;
+                startActivity(new Intent(AccountProfileActivity.this,ProfileAccountPostClicked.class)
+                        .putExtra(Constants.POST_IMAGE_URL,postImageUrl)
+                        .putExtra(Constants.POST_IMAGE_ID,postId));
+            }
+        });
+
     }
 
     private void setPhotoGridView(){
@@ -76,14 +91,17 @@ public class AccountProfileActivity extends AppCompatActivity {
                 .whereEqualTo(Constants.USER_ID,preferenceManager.getString(Constants.USER_ID))
                 .get()
                 .addOnCompleteListener(task -> {
+                    loading(false);
                    if(task.isSuccessful() && task.getResult() != null){
-                       loading(false);
                        for (QueryDocumentSnapshot queryDocumentSnapshot: task.getResult()){
                            String imageUrl = queryDocumentSnapshot.getString(Constants.POST_IMAGE_URL);
                            images.add(imageUrl);
+                           Post post = new Post();
+                           post.postId = queryDocumentSnapshot.getId();
+                           posts.add(post);
                        }
-                       ProfileAccountPostsAdapter profileAccountPostsAdapter = new ProfileAccountPostsAdapter(images,this);
-                       gridView.setAdapter(profileAccountPostsAdapter);
+                       ProfileAccountPostsAdapter profileAccountPostsAdapter = new ProfileAccountPostsAdapter(posts,images,this);
+                       binding.gridview1.setAdapter(profileAccountPostsAdapter);
 
                    }
 
@@ -105,5 +123,6 @@ public class AccountProfileActivity extends AppCompatActivity {
     private void showToast(String message) {
         Toast.makeText(getApplicationContext(),message, Toast.LENGTH_SHORT).show();
     }
+
 
 }
