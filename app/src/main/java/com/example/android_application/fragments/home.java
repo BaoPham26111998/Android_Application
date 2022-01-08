@@ -1,5 +1,6 @@
 package com.example.android_application.fragments;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -16,8 +17,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.android_application.R;
+import com.example.android_application.activities.PostAccountProfileActivity;
 import com.example.android_application.adapters.PostAdapter;
 import com.example.android_application.adapters.StoryAdapter;
+import com.example.android_application.databinding.FragmentHomeBinding;
+import com.example.android_application.listeners.PostListener;
 import com.example.android_application.models.Post;
 import com.example.android_application.models.Story;
 import com.example.android_application.ultilities.Constants;
@@ -33,18 +37,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class home extends Fragment{
+public class home extends Fragment implements PostListener {
 
     RecyclerView storyRecycl, postRecycler;
     PreferenceManager preferenceManager;
     private PostAdapter postAdapter;
     List<Post> posts = new ArrayList<>();
+    private FragmentHomeBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_home, container, false);
+        binding = FragmentHomeBinding.inflate(inflater,container,false);
         preferenceManager = new PreferenceManager(getContext());
-        storyRecycl = root.findViewById(R.id.story_recycler);
+        storyRecycl = binding.storyRecycler;
+        View view = binding.getRoot();
+
+
+        // ================= Story Area
+
 
         Story[] Storys = new Story[]{
                 new Story(R.drawable.dog, "Khaliq"),
@@ -68,10 +78,20 @@ public class home extends Fragment{
 
 
         //============================ Post area
+        loadPost();
+        setListener();
 
+        return view;
+    }
+    private void setListener(){
+
+    }
+
+
+    private void loadPost(){
         FirebaseFirestore database = FirebaseFirestore.getInstance();
 
-        postRecycler = root.findViewById(R.id.post_recycler);
+        postRecycler = binding.postRecycler;
         postRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
         postRecycler.setHasFixedSize(true);
 
@@ -80,9 +100,7 @@ public class home extends Fragment{
                 .addOnCompleteListener(task -> {
 
                     if (task.isSuccessful() && task.getResult() != null) {
-                        postRecycler = root.findViewById(R.id.post_recycler);
-                        postRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
-                        postRecycler.setHasFixedSize(true);
+
 
                         for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
 
@@ -96,6 +114,7 @@ public class home extends Fragment{
                             post.title = queryDocumentSnapshot.getString(Constants.POST_TITLE);
                             post.description = queryDocumentSnapshot.getString(Constants.POST_DESCRIPTION);
                             post.postId = queryDocumentSnapshot.getId();
+                            post.userId = queryDocumentSnapshot.getString(Constants.USER_ID);
                             List<String> userList = (List<String>) queryDocumentSnapshot.get(Constants.POST_USER_LIKE);
                             Integer likeLength = userList.size();
                             post.likeCount = likeLength.toString() +" likes";
@@ -107,30 +126,30 @@ public class home extends Fragment{
                 });
 
 
-                database.collection(Constants.COLLECTION_POST)
-                        .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                            @Override
-                            public void onEvent(@Nullable QuerySnapshot snapshot, @Nullable FirebaseFirestoreException error) {
-                                if(error != null){
-                                    Log.w("Listen error",error);
-                                    return;
-                            }
+        database.collection(Constants.COLLECTION_POST)
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot snapshot, @Nullable FirebaseFirestoreException error) {
+                        if(error != null){
+                            Log.w("Listen error",error);
+                            return;
+                        }
 
-                                for(DocumentChange documentChange : snapshot.getDocumentChanges()){
-                                    if (documentChange.getType() == DocumentChange.Type.MODIFIED){
-                                        List<String> userList = (List<String>) documentChange.getDocument().get(Constants.POST_USER_LIKE);
-                                        Integer likeLength = userList.size();
-                                        System.out.println(posts.size());
-                                        for(int i=0; i<posts.size();i++){
-                                            String postId = documentChange.getDocument().getId();
-                                            if(posts.get(i).postId.equals(postId)){
-                                                System.out.println(postId);
-                                                posts.get(i).likeCount = likeLength.toString() +" likes";
-                                                System.out.println(posts.get(i).likeCount);
+                        for(DocumentChange documentChange : snapshot.getDocumentChanges()){
+                            if (documentChange.getType() == DocumentChange.Type.MODIFIED){
+                                List<String> userList = (List<String>) documentChange.getDocument().get(Constants.POST_USER_LIKE);
+                                Integer likeLength = userList.size();
+                                System.out.println(posts.size());
+                                for(int i=0; i<posts.size();i++){
+                                    String postId = documentChange.getDocument().getId();
+                                    if(posts.get(i).postId.equals(postId)){
+                                        System.out.println(postId);
+                                        posts.get(i).likeCount = likeLength.toString() +" likes";
+                                        System.out.println(posts.get(i).likeCount);
 
-                                                break;
-                                            }
-                                        }
+                                        break;
+                                    }
+                                }
 
 //                                    byte[] bytes = Base64.decode(documentChange.getDocument().getString(Constants.IMAGE), Base64.DEFAULT);
 //                                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
@@ -147,19 +166,29 @@ public class home extends Fragment{
 //                                        post.likeCount = likeLength.toString() +" likes";
 //                                        post.comment = documentChange.getDocument().getDouble(Constants.POST_COMMENT).intValue() + " comments";
 //                                        posts.add(post);
-                                    }
+                            }
 
 //                                    PostAdapter postAdapter = new PostAdapter(posts);
 //                                    postRecycler.setAdapter(postAdapter);
-                                }
-                                postAdapter.notifyDataSetChanged();
-                            }
-                        });
+                        }
+                        postAdapter.notifyDataSetChanged();
+                    }
+                });
 
 
-        postAdapter = new PostAdapter(posts);
-        postRecycler.setAdapter(postAdapter);
+            postAdapter = new PostAdapter(posts, this);
+            postRecycler.setAdapter(postAdapter);
 
-        return root;
+
+    }
+
+    @Override
+    public void onImageProfileClicked(Post post) {
+        String postId = post.postId;
+        String userId = post.userId;
+        Intent intent = new Intent(getActivity(), PostAccountProfileActivity.class)
+                .putExtra(Constants.POST_IMAGE_ID,postId)
+                .putExtra(Constants.USER_ID,userId);
+        startActivity(intent);
     }
 }
