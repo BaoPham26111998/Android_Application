@@ -4,6 +4,146 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PhotoEditingActivity">
+    tools:context=".activities.PhotoEditingActivity">
+
+    <ja.burhanrashid52.photoeditor.PhotoEditorView
+        android:id="@+id/photoEditorView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:photo_src="@drawable/cat" >
+
+        <Button
+            android:id="@+id/brushMode"
+            android:layout_width="wrap_content"
+
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="10dp"
+            android:layout_marginBottom="158dp"
+            android:text="Brush"></Button>
+
+
+        <Button
+            android:id="@+id/undoButton"
+            android:layout_width="wrap_content"
+
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="306dp"
+            android:layout_marginBottom="511dp"
+            android:text="Undo"></Button>
+
+        <Button
+            android:id="@+id/filterButton"
+            android:layout_width="wrap_content"
+
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="122dp"
+            android:layout_marginBottom="158dp"
+            android:text="Filter"></Button>
+
+        <Button
+            android:id="@+id/textButton"
+            android:layout_width="wrap_content"
+
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="235dp"
+            android:layout_marginBottom="158dp"
+            android:text="Text"></Button>
+
+        <Button
+            android:id="@+id/exitButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="18dp"
+            android:layout_marginBottom="548dp"
+            android:text="X"></Button>
+
+        <Button
+            android:id="@+id/saveButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="140dp"
+            android:layout_marginBottom="548dp"
+            android:backgroundTint="@color/black"
+            android:text="Save"></Button>
+
+        <!--        BRUSH OPTIONS        -->
+        <RelativeLayout
+            android:id="@+id/brushOption"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:visibility="gone"
+            android:layout_alignParentBottom="true">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Size"
+            android:textSize="18dp"
+            android:layout_margin="10dp"
+            />
+        <com.google.android.material.slider.RangeSlider
+            android:layout_marginTop="20dp"
+            android:id="@+id/brushSizeRs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:valueFrom="1"
+            android:valueTo="100"
+            />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginTop="60dp"
+                android:text="Opacity"
+                android:textSize="18dp" />
+
+            <com.google.android.material.slider.RangeSlider
+                android:id="@+id/brushOpacityRs"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="-8dp"
+                android:valueFrom="1"
+                android:valueTo="100"/>
+
+        </RelativeLayout>
+
+        <!--        FILTER RV        -->
+        <HorizontalScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            >
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/filterRv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:visibility="gone"
+            >
+        </androidx.recyclerview.widget.RecyclerView>
+        </HorizontalScrollView>
+
+
+
+    </ja.burhanrashid52.photoeditor.PhotoEditorView>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

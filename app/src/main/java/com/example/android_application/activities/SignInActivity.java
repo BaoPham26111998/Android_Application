@@ -4,10 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.android_application.R;
 import com.example.android_application.databinding.ActivitySigninBinding;
 import com.example.android_application.ultilities.Constants;
 import com.example.android_application.ultilities.PreferenceManager;
@@ -19,6 +21,7 @@ public class SignInActivity extends AppCompatActivity {
 
     private ActivitySigninBinding binding;
     private PreferenceManager preferenceManager;
+    private Button toEditorButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +31,14 @@ public class SignInActivity extends AppCompatActivity {
         preferenceManager = new PreferenceManager(getApplicationContext());
         setContentView(binding.getRoot());
         setListeners();
+
+        toEditorButton = findViewById(R.id.toEditorButton);
+        toEditorButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(SignInActivity.this, PhotoEditingActivity.class));
+            }
+        });
 
     }
 
