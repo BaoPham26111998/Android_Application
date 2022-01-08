@@ -12,9 +12,9 @@ public class Post implements Serializable {
     public String date;
     public String title;
     public String description;
-    public String like;
     public String comment;
     public String postId;
     public String likeCount;
+    public String userId;
 
     }

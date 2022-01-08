@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Android_application">
         <activity
+            android:name=".activities.PostAccountProfileActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.ProfileAccountPostClicked"
             android:exported="false" />
         <activity

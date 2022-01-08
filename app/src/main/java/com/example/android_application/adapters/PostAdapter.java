@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.android_application.databinding.PostItemBinding;
+import com.example.android_application.listeners.PostListener;
 import com.example.android_application.models.Post;
 import com.example.android_application.ultilities.Constants;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -24,8 +25,10 @@ import java.util.List;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
     private final List<Post> postList;
-    public PostAdapter(List<Post> postList) {
+    private final PostListener postListener;
+    public PostAdapter(List<Post> postList, PostListener postListener) {
         this.postList = postList;
+        this.postListener = postListener;
     }
 
     @NonNull
@@ -67,6 +70,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             binding.profileDate.setText(post.date);
             binding.feedsCommentCount.setText(post.comment);
             binding.feedsLikesCount.setText(post.likeCount);
+            binding.profileImage.setOnClickListener(v-> postListener.onImageProfileClicked(post));
             FirebaseFirestore database = FirebaseFirestore.getInstance();
 
             FirebaseAuth mAuth = FirebaseAuth.getInstance();
