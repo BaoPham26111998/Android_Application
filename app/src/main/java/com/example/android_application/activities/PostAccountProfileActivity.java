@@ -15,6 +15,7 @@ import com.example.android_application.adapters.ProfileAccountPostsAdapter;
 import com.example.android_application.databinding.ActivityPostAccountProfileBinding;
 import com.example.android_application.models.Post;
 import com.example.android_application.ultilities.Constants;
+import com.example.android_application.ultilities.PreferenceManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -31,10 +32,11 @@ public class PostAccountProfileActivity extends AppCompatActivity {
     List<Post> posts = new ArrayList<>();
     private String userId;
 
-
+    PreferenceManager preferenceManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        preferenceManager = new PreferenceManager(getApplicationContext());
         binding = ActivityPostAccountProfileBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -61,6 +63,11 @@ public class PostAccountProfileActivity extends AppCompatActivity {
                         .putExtra(Constants.POST_IMAGE_ID,postId));
             }
         });
+        if (preferenceManager.getString(Constants.USER_ID).equals(userId)){
+            binding.followButton.setText("Edit Profile");
+        }else {
+            binding.followButton.setText("Follow");
+        }
 
     }
 

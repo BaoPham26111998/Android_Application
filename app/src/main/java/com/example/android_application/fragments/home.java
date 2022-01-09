@@ -30,7 +30,6 @@ import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
@@ -95,38 +94,11 @@ public class home extends Fragment implements PostListener {
         postRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
         postRecycler.setHasFixedSize(true);
 
-        database.collection(Constants.COLLECTION_POST)
-                .get()
-                .addOnCompleteListener(task -> {
 
-                    if (task.isSuccessful() && task.getResult() != null) {
-
-
-                        for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
-
-                            byte[] bytes = Base64.decode(queryDocumentSnapshot.getString(Constants.IMAGE), Base64.DEFAULT);
-                            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                            Post post = new Post();
-                            post.postImg = queryDocumentSnapshot.getString(Constants.POST_IMAGE_URL);
-                            post.date = queryDocumentSnapshot.getDate(Constants.TIMESTAMP).toString();
-                            post.name = queryDocumentSnapshot.getString(Constants.NAME);
-                            post.imageProfile = bitmap;
-                            post.title = queryDocumentSnapshot.getString(Constants.POST_TITLE);
-                            post.description = queryDocumentSnapshot.getString(Constants.POST_DESCRIPTION);
-                            post.postId = queryDocumentSnapshot.getId();
-                            post.userId = queryDocumentSnapshot.getString(Constants.USER_ID);
-                            List<String> userList = (List<String>) queryDocumentSnapshot.get(Constants.POST_USER_LIKE);
-                            Integer likeLength = userList.size();
-                            post.likeCount = likeLength.toString() +" likes";
-                            post.comment = queryDocumentSnapshot.getDouble(Constants.POST_COMMENT).intValue() + " comments";
-                            posts.add(post);
-                        }
-
-                    }
-                });
-
+        // Retrieve data from firebase
 
         database.collection(Constants.COLLECTION_POST)
+                // Data snapshot listener to recognize the data changed from firebase
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot snapshot, @Nullable FirebaseFirestoreException error) {
@@ -136,6 +108,26 @@ public class home extends Fragment implements PostListener {
                         }
 
                         for(DocumentChange documentChange : snapshot.getDocumentChanges()){
+                            //When new post was add
+                            if(documentChange.getType() == DocumentChange.Type.ADDED) {
+                                byte[] bytes = Base64.decode(documentChange.getDocument().getString(Constants.IMAGE), Base64.DEFAULT);
+                                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                                Post post = new Post();
+                                post.postImg = documentChange.getDocument().getString(Constants.POST_IMAGE_URL);
+                                post.date = documentChange.getDocument().getDate(Constants.TIMESTAMP).toString();
+                                post.name = documentChange.getDocument().getString(Constants.NAME);
+                                post.imageProfile = bitmap;
+                                post.title = documentChange.getDocument().getString(Constants.POST_TITLE);
+                                post.description = documentChange.getDocument().getString(Constants.POST_DESCRIPTION);
+                                post.postId = documentChange.getDocument().getId();
+                                post.userId = documentChange.getDocument().getString(Constants.USER_ID);
+                                List<String> userList = (List<String>) documentChange.getDocument().get(Constants.POST_USER_LIKE);
+                                Integer likeLength = userList.size();
+                                post.likeCount = likeLength.toString() +" likes";
+                                post.comment = documentChange.getDocument().getDouble(Constants.POST_COMMENT).intValue() + " comments";
+                                posts.add(post);
+                            }
+                            //When post was update or change
                             if (documentChange.getType() == DocumentChange.Type.MODIFIED){
                                 List<String> userList = (List<String>) documentChange.getDocument().get(Constants.POST_USER_LIKE);
                                 Integer likeLength = userList.size();
@@ -149,27 +141,10 @@ public class home extends Fragment implements PostListener {
 
                                         break;
                                     }
-                                }
 
-//                                    byte[] bytes = Base64.decode(documentChange.getDocument().getString(Constants.IMAGE), Base64.DEFAULT);
-//                                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-//                                    Post post = new Post();
-//                                        post.postImg = documentChange.getDocument().getString(Constants.POST_IMAGE_URL);
-//                                        post.date = documentChange.getDocument().getDate(Constants.TIMESTAMP).toString();
-//                                        post.name = documentChange.getDocument().getString(Constants.NAME);
-//                                        post.imageProfile = bitmap;
-//                                        post.title =documentChange.getDocument().getString(Constants.POST_TITLE);
-//                                        post.description = documentChange.getDocument().getString(Constants.POST_DESCRIPTION);
-//                                        post.postId = documentChange.getDocument().getId();
-//                                        List<String> userList = (List<String>) documentChange.getDocument().get(Constants.POST_USER_LIKE);
-//                                        Integer likeLength = userList.size();
-//                                        post.likeCount = likeLength.toString() +" likes";
-//                                        post.comment = documentChange.getDocument().getDouble(Constants.POST_COMMENT).intValue() + " comments";
-//                                        posts.add(post);
+                                }
                             }
 
-//                                    PostAdapter postAdapter = new PostAdapter(posts);
-//                                    postRecycler.setAdapter(postAdapter);
                         }
                         postAdapter.notifyDataSetChanged();
                     }

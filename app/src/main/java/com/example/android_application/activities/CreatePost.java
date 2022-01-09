@@ -85,6 +85,7 @@ public class CreatePost extends AppCompatActivity {
 
         });
         binding.buttonReturn.setOnClickListener(v-> onBackPressed());
+        binding.imageReturn.setOnClickListener(v -> onBackPressed());
     }
 
     private void selectImage(){

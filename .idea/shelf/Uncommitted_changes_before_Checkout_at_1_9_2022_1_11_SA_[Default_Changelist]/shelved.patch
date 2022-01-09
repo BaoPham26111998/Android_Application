@@ -1,0 +1,102 @@
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"DesignSurface\">\r\n    <option name=\"filePathToZoomLevelMap\">\r\n      <map>\r\n        <entry key=\"..\\:/Study/Assignments/Android/android_application/app/src/main/res/font/roboto_medium.xml\" value=\"0.3\" />\r\n        <entry key=\"..\\:/Study/Assignments/Android/android_application/app/src/main/res/layout/activity_camera.xml\" value=\"0.27447916666666666\" />\r\n        <entry key=\"..\\:/Study/Assignments/Android/android_application/app/src/main/res/layout/activity_create_post.xml\" value=\"0.27447916666666666\" />\r\n        <entry key=\"..\\:/Study/Assignments/Android/android_application/app/src/main/res/layout/activity_main.xml\" value=\"0.26296296296296295\" />\r\n        <entry key=\"..\\:/Study/Assignments/Android/android_application/app/src/main/res/layout/activity_signin.xml\" value=\"0.27447916666666666\" />\r\n        <entry key=\"..\\:/Study/Assignments/Android/android_application/app/src/main/res/layout/fragment_brush.xml\" value=\"0.27447916666666666\" />\r\n        <entry key=\"..\\:/Study/Assignments/Android/android_application/app/src/main/res/layout/fragment_dashboard.xml\" value=\"0.27447916666666666\" />\r\n        <entry key=\"..\\:/Study/Assignments/Android/android_application/app/src/main/res/layout/fragment_market.xml\" value=\"0.27447916666666666\" />\r\n        <entry key=\"..\\:/Study/Assignments/Android/android_application/app/src/main/res/layout/row_filters.xml\" value=\"0.27447916666666666\" />\r\n        <entry key=\"..\\:/Study/Assignments/Android/android_application/app/src/main/res/layout/row_video.xml\" value=\"0.24537037037037038\" />\r\n        <entry key=\"..\\:/Users/Dell/Downloads/Android_application/app/src/main/res/layout/activity_home.xml\" value=\"0.264\" />\r\n        <entry key=\"..\\:/Users/Dell/Downloads/Android_application/app/src/main/res/layout/activity_main.xml\" value=\"0.1\" />\r\n        <entry key=\"..\\:/Users/Dell/Downloads/Android_application/app/src/main/res/layout/fragment_dashboard.xml\" value=\"0.1\" />\r\n        <entry key=\"..\\:/Users/Dell/Downloads/Android_application/app/src/main/res/layout/fragment_home.xml\" value=\"0.14375\" />\r\n        <entry key=\"..\\:/Users/Dell/Downloads/Android_application/app/src/main/res/layout/home.xml\" value=\"0.1\" />\r\n        <entry key=\"..\\:/Users/Dell/Downloads/Android_application/app/src/main/res/layout/item_container_post.xml\" value=\"0.14375\" />\r\n        <entry key=\"..\\:/Users/Dell/Downloads/Android_application/app/src/main/res/layout/post_item.xml\" value=\"0.1\" />\r\n        <entry key=\"..\\:/Users/Dell/Downloads/Android_application/app/src/main/res/menu/action_bar.xml\" value=\"0.1\" />\r\n        <entry key=\"..\\:/Users/Dell/Downloads/Android_application/app/src/main/res/menu/bottom_nav_menu.xml\" value=\"0.27447916666666666\" />\r\n      </map>\r\n    </option>\r\n  </component>\r\n  <component name=\"ProjectRootManager\" version=\"2\" languageLevel=\"JDK_11\" default=\"true\" project-jdk-name=\"Android Studio default JDK\" project-jdk-type=\"JavaSDK\">\r\n    <output url=\"file://$PROJECT_DIR$/build/classes\" />\r\n  </component>\r\n  <component name=\"ProjectType\">\r\n    <option name=\"id\" value=\"Android\" />\r\n  </component>\r\n  <component name=\"VisualizationToolProject\">\r\n    <option name=\"state\">\r\n      <ProjectState>\r\n        <option name=\"scale\" value=\"0.264\" />\r\n      </ProjectState>\r\n    </option>\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+--- a/.idea/misc.xml	
++++ b/.idea/misc.xml	
+@@ -3,25 +3,47 @@
+   <component name="DesignSurface">
+     <option name="filePathToZoomLevelMap">
+       <map>
+-        <entry key="..\:/Study/Assignments/Android/android_application/app/src/main/res/font/roboto_medium.xml" value="0.3" />
+-        <entry key="..\:/Study/Assignments/Android/android_application/app/src/main/res/layout/activity_camera.xml" value="0.27447916666666666" />
+-        <entry key="..\:/Study/Assignments/Android/android_application/app/src/main/res/layout/activity_create_post.xml" value="0.27447916666666666" />
+-        <entry key="..\:/Study/Assignments/Android/android_application/app/src/main/res/layout/activity_main.xml" value="0.26296296296296295" />
+-        <entry key="..\:/Study/Assignments/Android/android_application/app/src/main/res/layout/activity_signin.xml" value="0.27447916666666666" />
+-        <entry key="..\:/Study/Assignments/Android/android_application/app/src/main/res/layout/fragment_brush.xml" value="0.27447916666666666" />
+-        <entry key="..\:/Study/Assignments/Android/android_application/app/src/main/res/layout/fragment_dashboard.xml" value="0.27447916666666666" />
+-        <entry key="..\:/Study/Assignments/Android/android_application/app/src/main/res/layout/fragment_market.xml" value="0.27447916666666666" />
+-        <entry key="..\:/Study/Assignments/Android/android_application/app/src/main/res/layout/row_filters.xml" value="0.27447916666666666" />
+-        <entry key="..\:/Study/Assignments/Android/android_application/app/src/main/res/layout/row_video.xml" value="0.24537037037037038" />
+-        <entry key="..\:/Users/Dell/Downloads/Android_application/app/src/main/res/layout/activity_home.xml" value="0.264" />
+-        <entry key="..\:/Users/Dell/Downloads/Android_application/app/src/main/res/layout/activity_main.xml" value="0.1" />
+-        <entry key="..\:/Users/Dell/Downloads/Android_application/app/src/main/res/layout/fragment_dashboard.xml" value="0.1" />
+-        <entry key="..\:/Users/Dell/Downloads/Android_application/app/src/main/res/layout/fragment_home.xml" value="0.14375" />
+-        <entry key="..\:/Users/Dell/Downloads/Android_application/app/src/main/res/layout/home.xml" value="0.1" />
+-        <entry key="..\:/Users/Dell/Downloads/Android_application/app/src/main/res/layout/item_container_post.xml" value="0.14375" />
+-        <entry key="..\:/Users/Dell/Downloads/Android_application/app/src/main/res/layout/post_item.xml" value="0.1" />
+-        <entry key="..\:/Users/Dell/Downloads/Android_application/app/src/main/res/menu/action_bar.xml" value="0.1" />
+-        <entry key="..\:/Users/Dell/Downloads/Android_application/app/src/main/res/menu/bottom_nav_menu.xml" value="0.27447916666666666" />
++        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/drawable/background_chat_input.xml" value="0.15" />
++        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/drawable/background_content_bottom.xml" value="0.2712820512820513" />
++        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/drawable/background_icon.xml" value="0.2657407407407407" />
++        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/drawable/background_image.xml" value="0.15" />
++        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/drawable/background_post_image.xml" value="0.15" />
++        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/drawable/btn_shape_1.xml" value="0.16510416666666666" />
++        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/drawable/ic_back.xml" value="0.2657407407407407" />
++        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/drawable/ic_logout.xml" value="0.2657407407407407" />
++        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/font/roboto.xml" value="0.1" />
++        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/font/roboto_medium.xml" value="0.15572916666666667" />
++        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/activity_account_profile.xml" value="0.264" />
++        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/activity_add_video.xml" value="0.17395833333333333" />
++        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/activity_chat.xml" value="0.259375" />
++        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/activity_chat_user.xml" value="0.12760416666666666" />
++        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/activity_create_post.xml" value="0.264" />
++        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/activity_home.xml" value="0.264" />
++        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/activity_main.xml" value="0.2" />
++        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/activity_main_chat.xml" value="0.12760416666666666" />
++        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/activity_post_account_profile.xml" value="0.259375" />
++        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/activity_profile.xml" value="0.13333333333333333" />
++        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/activity_profile_account_post_clicked.xml" value="0.264" />
++        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/activity_sign_up.xml" value="0.259375" />
++        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/activity_signin.xml" value="0.264" />
++        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/activity_users.xml" value="0.259375" />
++        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/fragment_dashboard.xml" value="0.259375" />
++        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/fragment_home.xml" value="0.259375" />
++        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/fragment_market.xml" value="0.259375" />
++        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/fragment_notifications.xml" value="0.259375" />
++        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/fragment_profile.xml" value="0.259375" />
++        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/industry_app_item.xml" value="0.259375" />
++        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/item_container_post.xml" value="0.259375" />
++        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/item_container_receive_message.xml" value="0.259375" />
++        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/item_container_recent_conversasion.xml" value="0.12760416666666666" />
++        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/item_container_sent_message.xml" value="0.259375" />
++        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/item_container_user.xml" value="0.259375" />
++        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/item_industry.xml" value="0.259375" />
++        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/post_item.xml" value="0.264" />
++        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/row_image_account_profile_post.xml" value="0.17395833333333333" />
++        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/row_video.xml" value="0.259375" />
++        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/rowlayout.xml" value="0.259375" />
++        <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/layout/story_item.xml" value="0.259375" />
+       </map>
+     </option>
+   </component>
+@@ -31,11 +53,4 @@
+   <component name="ProjectType">
+     <option name="id" value="Android" />
+   </component>
+-  <component name="VisualizationToolProject">
+-    <option name="state">
+-      <ProjectState>
+-        <option name="scale" value="0.264" />
+-      </ProjectState>
+-    </option>
+-  </component>
+ </project>
+\ No newline at end of file
+Index: app/src/main/res/font/roboto.xml
+===================================================================
+diff --git a/app/src/main/res/font/roboto.xml b/app/src/main/res/font/roboto.xml
+new file mode 100644
+--- /dev/null	
++++ b/app/src/main/res/font/roboto.xml	
+@@ -0,0 +1,4 @@
++<?xml version="1.0" encoding="utf-8"?>
++<font-family xmlns:android="http://schemas.android.com/apk/res/android">
++
++</font-family>
+\ No newline at end of file

@@ -1,0 +1,61 @@
+Index: app/src/main/java/com/example/android_application/activities/PhotoEditingActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.android_application.activities;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.RequiresApi;\r\nimport androidx.appcompat.app.AlertDialog;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\nimport androidx.recyclerview.widget.RecyclerView;\r\n\r\nimport android.content.DialogInterface;\r\nimport android.content.Intent;\r\nimport android.graphics.Bitmap;\r\nimport android.graphics.Typeface;\r\nimport android.graphics.drawable.Drawable;\r\nimport android.os.Build;\r\nimport android.os.Bundle;\r\nimport android.util.Base64;\r\nimport android.util.Log;\r\nimport android.view.View;\r\nimport android.widget.Button;\r\nimport android.widget.RelativeLayout;\r\nimport android.widget.Toast;\r\n\r\nimport com.example.android_application.R;\r\nimport com.example.android_application.adapters.FilterAdapter;\r\nimport com.google.android.material.slider.RangeSlider;\r\n\r\nimport java.io.ByteArrayOutputStream;\r\nimport java.util.ArrayList;\r\n\r\nimport ja.burhanrashid52.photoeditor.OnSaveBitmap;\r\nimport ja.burhanrashid52.photoeditor.PhotoEditor;\r\nimport ja.burhanrashid52.photoeditor.PhotoEditorView;\r\nimport ja.burhanrashid52.photoeditor.PhotoFilter;\r\nimport ja.burhanrashid52.photoeditor.SaveSettings;\r\n\r\npublic class PhotoEditingActivity extends AppCompatActivity {\r\n    PhotoEditorView mPhotoEditorView;\r\n    Button brushModeButton, undoButton, filterButton, textButton, exitButton, saveButton;\r\n    PhotoEditor mPhotoEditor;\r\n    RangeSlider brushSizeRs, brushOpacityRs;\r\n    FilterAdapter filterAdapter;\r\n    RecyclerView rv;\r\n    RelativeLayout brushOptionsLayout;\r\n\r\n    ArrayList<String> filterNamesList = new ArrayList<>();\r\n    ArrayList<PhotoFilter> filters = new ArrayList<>();\r\n    ArrayList<Drawable> filterImagesList = new ArrayList<>();\r\n\r\n    @RequiresApi(api = Build.VERSION_CODES.O)\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_camera);\r\n\r\n        Typeface typeface = getResources().getFont(R.font.roboto);\r\n\r\n        mPhotoEditorView = findViewById(R.id.photoEditorView);\r\n        brushModeButton = findViewById(R.id.brushMode);\r\n        filterButton = findViewById(R.id.filterButton);\r\n        undoButton = findViewById(R.id.undoButton);\r\n        textButton = findViewById(R.id.textButton);\r\n        exitButton = findViewById(R.id.exitButton);\r\n        saveButton = findViewById(R.id.saveButton);\r\n        rv = findViewById(R.id.filterRv);\r\n\r\n        brushOptionsLayout = findViewById(R.id.brushOption);\r\n        brushSizeRs = findViewById(R.id.brushSizeRs);\r\n        brushOpacityRs = findViewById(R.id.brushOpacityRs);\r\n\r\n        brushSizeRs.addOnChangeListener(new RangeSlider.OnChangeListener() {\r\n            @Override\r\n            public void onValueChange(@NonNull RangeSlider slider, float value, boolean fromUser) {\r\n                int size = (int) value;\r\n                mPhotoEditor.setBrushSize(size);\r\n            }\r\n        });\r\n\r\n        brushOpacityRs.addOnChangeListener(new RangeSlider.OnChangeListener() {\r\n            @Override\r\n            public void onValueChange(@NonNull RangeSlider slider, float value, boolean fromUser) {\r\n                int opacity = (int) value;\r\n                mPhotoEditor.setOpacity(opacity);\r\n            }\r\n        });\r\n\r\n        saveButton.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                savePhoto();\r\n            }\r\n        });\r\n\r\n        // Set image\r\n        mPhotoEditorView.getSource().setImageResource(R.drawable.cat);\r\n\r\n\r\n        mPhotoEditor = new PhotoEditor.Builder(this, mPhotoEditorView)\r\n                .setPinchTextScalable(true)\r\n                .setDefaultTextTypeface(typeface)\r\n                .setClipSourceImage(true)\r\n                .build();\r\n        setListener();\r\n    }\r\n\r\n    void setListener(){\r\n        brushModeButton.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                mPhotoEditor.setBrushDrawingMode(true);\r\n                brushOptionsLayout.setVisibility(View.VISIBLE);\r\n                brushModeButton.setEnabled(false);\r\n            }\r\n        });\r\n\r\n        undoButton.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                mPhotoEditor.undo();\r\n                mPhotoEditor.setFilterEffect(PhotoFilter.NONE);\r\n            }\r\n        });\r\n\r\n        filterButton.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                filterNamesList.add(\"Brightness\");\r\n                filterNamesList.add(\"Vignette\");\r\n                filterNamesList.add(\"Fish Eye\");\r\n                filterNamesList.add(\"Negative\");\r\n                filterNamesList.add(\"Gray Scale\");\r\n                filters.add(PhotoFilter.BRIGHTNESS);\r\n                filters.add(PhotoFilter.VIGNETTE);\r\n                filters.add(PhotoFilter.FISH_EYE);\r\n                filters.add(PhotoFilter.NEGATIVE);\r\n                filters.add(PhotoFilter.GRAY_SCALE);\r\n\r\n                filterAdapter = new FilterAdapter(filterNamesList, mPhotoEditor, filters);\r\n                rv.setAdapter(filterAdapter);\r\n                rv.setVisibility(View.VISIBLE);\r\n                filterButton.setEnabled(false);\r\n                brushOptionsLayout.setVisibility(View.GONE);\r\n            }\r\n        });\r\n\r\n        exitButton.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                // Filters\r\n                filterNamesList.clear();\r\n                filters.clear();\r\n                rv.setVisibility(View.GONE);\r\n                filterButton.setEnabled(true);\r\n\r\n                // Brush\r\n                brushOptionsLayout.setVisibility(View.GONE);\r\n                brushModeButton.setEnabled(true);\r\n                mPhotoEditor.setBrushDrawingMode(false);\r\n            }\r\n        });\r\n    }\r\n\r\n    public void savePhoto(){\r\n        if (alertDialog()[0]){\r\n            SaveSettings saveSettings = new SaveSettings.Builder()\r\n                    .setClearViewsEnabled(true)\r\n                    .setTransparencyEnabled(true)\r\n                    .setCompressFormat(Bitmap.CompressFormat.JPEG)\r\n                    .setCompressQuality(50)\r\n                    .build();\r\n            mPhotoEditor.saveAsBitmap(saveSettings, new OnSaveBitmap() {\r\n                @Override\r\n                public void onBitmapReady(Bitmap saveBitmap) {\r\n                    Intent intent = new Intent(PhotoEditingActivity.this, CreatePost.class);\r\n                    intent.putExtra(\"image\", encodeImage(saveBitmap));\r\n                    startActivity(intent);\r\n                    Log.e(\"PhotoEditor\",\"Image Saved Successfully\");\r\n                }\r\n\r\n                @Override\r\n                public void onFailure(Exception e) {\r\n                    Log.e(\"PhotoEditor\",\"Failed to save Image\");\r\n                }\r\n            });\r\n        }\r\n        else {\r\n            Toast.makeText(PhotoEditingActivity.this, \"Saving Cancelled!\", Toast.LENGTH_SHORT).show();\r\n        }\r\n    }\r\n\r\n    private String encodeImage(Bitmap bitmap) {\r\n        //Reformat the image size to fit the avatar frame\r\n        int previewWidth = 150;\r\n        int previewHeight  = bitmap.getHeight() * previewWidth / bitmap.getWidth();\r\n        Bitmap previewBitmap = Bitmap.createScaledBitmap(bitmap, previewWidth,previewHeight,false);\r\n        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();\r\n        //Encode image from JPEG to string Bytes to add to the database\r\n        previewBitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);\r\n        byte[] bytes = byteArrayOutputStream.toByteArray();\r\n        return Base64.encodeToString(bytes, Base64.DEFAULT);\r\n    }\r\n\r\n    private boolean[] alertDialog(){\r\n        final boolean[] confirmation = {false};\r\n        AlertDialog.Builder builder = new AlertDialog.Builder(this);\r\n        builder.setTitle(\"Photo Editor\");\r\n        builder.setMessage(\"Are you sure?\");\r\n//        builder.setIcon(R.drawable.ic_launcher);\r\n        builder.setPositiveButton(\"Yes\", new DialogInterface.OnClickListener() {\r\n            public void onClick(DialogInterface dialog, int id) {\r\n                dialog.dismiss();\r\n                confirmation[0] = true;\r\n            }\r\n        });\r\n        builder.setNegativeButton(\"No\", new DialogInterface.OnClickListener() {\r\n            public void onClick(DialogInterface dialog, int id) {\r\n                dialog.dismiss();\r\n                confirmation[0] = false;\r\n            }\r\n        });\r\n        AlertDialog alert = builder.create();\r\n        alert.show();\r\n        return confirmation;\r\n    }\r\n}
+===================================================================
+diff --git a/app/src/main/java/com/example/android_application/activities/PhotoEditingActivity.java b/app/src/main/java/com/example/android_application/activities/PhotoEditingActivity.java
+--- a/app/src/main/java/com/example/android_application/activities/PhotoEditingActivity.java	
++++ b/app/src/main/java/com/example/android_application/activities/PhotoEditingActivity.java	
+@@ -1,11 +1,5 @@
+ package com.example.android_application.activities;
+ 
+-import androidx.annotation.NonNull;
+-import androidx.annotation.RequiresApi;
+-import androidx.appcompat.app.AlertDialog;
+-import androidx.appcompat.app.AppCompatActivity;
+-import androidx.recyclerview.widget.RecyclerView;
+-
+ import android.content.DialogInterface;
+ import android.content.Intent;
+ import android.graphics.Bitmap;
+@@ -20,6 +14,12 @@
+ import android.widget.RelativeLayout;
+ import android.widget.Toast;
+ 
++import androidx.annotation.NonNull;
++import androidx.annotation.RequiresApi;
++import androidx.appcompat.app.AlertDialog;
++import androidx.appcompat.app.AppCompatActivity;
++import androidx.recyclerview.widget.RecyclerView;
++
+ import com.example.android_application.R;
+ import com.example.android_application.adapters.FilterAdapter;
+ import com.google.android.material.slider.RangeSlider;
+Index: .idea/deploymentTargetDropDown.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/deploymentTargetDropDown.xml b/.idea/deploymentTargetDropDown.xml
+deleted file mode 100644
+--- a/.idea/deploymentTargetDropDown.xml	
++++ /dev/null	
+@@ -1,17 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<project version="4">
+-  <component name="deploymentTargetDropDown">
+-    <runningDeviceTargetSelectedWithDropDown>
+-      <Target>
+-        <type value="RUNNING_DEVICE_TARGET" />
+-        <deviceKey>
+-          <Key>
+-            <type value="VIRTUAL_DEVICE_PATH" />
+-            <value value="C:\Users\ADMIN\.android\avd\Pixel_3_API_30_1.avd" />
+-          </Key>
+-        </deviceKey>
+-      </Target>
+-    </runningDeviceTargetSelectedWithDropDown>
+-    <timeTargetWasSelectedWithDropDown value="2022-01-08T09:26:29.813404400Z" />
+-  </component>
+-</project>
+\ No newline at end of file
