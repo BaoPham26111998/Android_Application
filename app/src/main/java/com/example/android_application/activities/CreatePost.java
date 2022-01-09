@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -34,6 +35,8 @@ public class CreatePost extends AppCompatActivity {
     private PreferenceManager preferenceManager;
     private String encodedImage;
     private FloatingActionButton toAddVideoFab;
+    private Button toEditImage;
+    Uri imageUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +46,13 @@ public class CreatePost extends AppCompatActivity {
         setContentView(binding.getRoot());
         loadUserInfo();
         setListeners();
+
+        Intent intent = new Intent();
+        if (encodedImage != null){
+            encodedImage = intent.getStringExtra("image");
+        }
+
+        toEditImage = findViewById(R.id.toEditImageButton);
 
         toAddVideoFab = (FloatingActionButton) findViewById(R.id.toAddVideoFab);
         toAddVideoFab.setOnClickListener(new View.OnClickListener() {
@@ -76,6 +86,15 @@ public class CreatePost extends AppCompatActivity {
         binding.buttonCreatePost.setOnClickListener(v -> {
             createPost();
         });
+
+        toEditImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(CreatePost.this, PhotoEditingActivity.class);
+                intent.putExtra("imageUri", imageUri.toString());
+                startActivity(intent);
+            }
+        });
     }
 
     private void createPost(){
@@ -86,7 +105,7 @@ public class CreatePost extends AppCompatActivity {
         HashMap<String, Object> postArray = new HashMap<>();
         postArray.put(Constants.POST_TITLE,binding.inputTitle.getText().toString());
         postArray.put(Constants.POST_DESCRIPTION,binding.inputDescription.getText().toString());
-        postArray.put(Constants.POST_IMAGE,encodedImage);
+        postArray.put(Constants.POST_IMAGE, encodedImage);
 
         list.add(postArray);
         System.out.println("alo" + list.toString());
@@ -132,7 +151,7 @@ public class CreatePost extends AppCompatActivity {
                     //When the data was found (or the image has been chosen)
                     if(result.getData() != null){
                         //We will set the URI of the image to grant read permission for the encodeImage function
-                        Uri imageUri = result.getData().getData();
+                        imageUri = result.getData().getData();
                         try{
                             InputStream inputStream = getContentResolver().openInputStream(imageUri);
                             Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
@@ -146,6 +165,7 @@ public class CreatePost extends AppCompatActivity {
                         } catch (FileNotFoundException e) {
                             e.printStackTrace();
                         }
+
                     }
                 }
             }

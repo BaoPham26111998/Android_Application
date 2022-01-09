@@ -11,12 +11,16 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -27,11 +31,13 @@ import com.google.android.material.slider.RangeSlider;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
+import ja.burhanrashid52.photoeditor.OnPhotoEditorListener;
 import ja.burhanrashid52.photoeditor.OnSaveBitmap;
 import ja.burhanrashid52.photoeditor.PhotoEditor;
 import ja.burhanrashid52.photoeditor.PhotoEditorView;
 import ja.burhanrashid52.photoeditor.PhotoFilter;
 import ja.burhanrashid52.photoeditor.SaveSettings;
+import ja.burhanrashid52.photoeditor.ViewType;
 
 public class PhotoEditingActivity extends AppCompatActivity {
     PhotoEditorView mPhotoEditorView;
@@ -41,6 +47,11 @@ public class PhotoEditingActivity extends AppCompatActivity {
     FilterAdapter filterAdapter;
     RecyclerView rv;
     RelativeLayout brushOptionsLayout;
+
+    ViewGroup _root;
+    EditText textEdit;
+    private int _xDelta;
+    private int _yDelta;
 
     ArrayList<String> filterNamesList = new ArrayList<>();
     ArrayList<PhotoFilter> filters = new ArrayList<>();
@@ -61,6 +72,8 @@ public class PhotoEditingActivity extends AppCompatActivity {
         textButton = findViewById(R.id.textButton);
         exitButton = findViewById(R.id.exitButton);
         saveButton = findViewById(R.id.saveButton);
+
+        textEdit = findViewById(R.id.textAddition);
         rv = findViewById(R.id.filterRv);
 
         brushOptionsLayout = findViewById(R.id.brushOption);
@@ -91,8 +104,11 @@ public class PhotoEditingActivity extends AppCompatActivity {
         });
 
         // Set image
-        mPhotoEditorView.getSource().setImageResource(R.drawable.cat);
-
+        Uri imageUri;
+        Intent intent = new Intent();
+        imageUri = Uri.parse(intent.getStringExtra("imageUri"));
+//        mPhotoEditorView.getSource().setImageResource(R.drawable.cat);
+        mPhotoEditorView.getSource().setImageURI(imageUri);
 
         mPhotoEditor = new PhotoEditor.Builder(this, mPhotoEditorView)
                 .setPinchTextScalable(true)
@@ -103,12 +119,31 @@ public class PhotoEditingActivity extends AppCompatActivity {
     }
 
     void setListener(){
+
+        textButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                textEdit.setVisibility(View.VISIBLE);
+                textEdit.setHint("Your Text Here...");
+
+                mPhotoEditor.addText(textEdit.toString(), R.color.text1_color);
+                textButton.setEnabled(false);
+                filterButton.setEnabled(true);
+                brushModeButton.setEnabled(true);
+            }
+        });
+
         brushModeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mPhotoEditor.setBrushDrawingMode(true);
                 brushOptionsLayout.setVisibility(View.VISIBLE);
+
                 brushModeButton.setEnabled(false);
+                filterButton.setEnabled(true);
+
+                clearFilterList();
+                rv.setVisibility(View.GONE);
             }
         });
 
@@ -139,6 +174,7 @@ public class PhotoEditingActivity extends AppCompatActivity {
                 rv.setVisibility(View.VISIBLE);
                 filterButton.setEnabled(false);
                 brushOptionsLayout.setVisibility(View.GONE);
+                brushModeButton.setEnabled(true);
             }
         });
 
@@ -146,8 +182,7 @@ public class PhotoEditingActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // Filters
-                filterNamesList.clear();
-                filters.clear();
+                clearFilterList();
                 rv.setVisibility(View.GONE);
                 filterButton.setEnabled(true);
 
@@ -157,6 +192,11 @@ public class PhotoEditingActivity extends AppCompatActivity {
                 mPhotoEditor.setBrushDrawingMode(false);
             }
         });
+    }
+
+    public void clearFilterList(){
+        filterNamesList.clear();
+        filters.clear();
     }
 
     public void savePhoto(){
