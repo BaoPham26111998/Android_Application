@@ -1,5 +1,6 @@
 package com.example.android_application.activities;
 
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -9,6 +10,7 @@ import android.provider.MediaStore;
 import android.util.Base64;
 import android.view.View;
 import android.webkit.MimeTypeMap;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -17,6 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.android_application.R;
 import com.example.android_application.databinding.ActivityCreatePostBinding;
 import com.example.android_application.ultilities.Constants;
 import com.example.android_application.ultilities.PreferenceManager;
@@ -46,9 +49,7 @@ public class CreatePost extends AppCompatActivity {
     private StorageReference storageReference;
     private DatabaseReference databaseReference;
     private StorageTask storageTask;
-    private String encodedImage;
     private Button toEditImage;
-    Uri imageUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,12 +63,6 @@ public class CreatePost extends AppCompatActivity {
         loadUserInfo();
         setListeners();
 
-        Intent intent = new Intent();
-        if (encodedImage != null){
-            encodedImage = intent.getStringExtra("image");
-        }
-
-        toEditImage = findViewById(R.id.toEditImageButton);
     }
 
     private void loadUserInfo() {
@@ -93,6 +88,16 @@ public class CreatePost extends AppCompatActivity {
             createPost();
         });
         binding.buttonReturn.setOnClickListener(v-> onBackPressed());
+
+        toEditImage = findViewById(R.id.toPhotoEditorButton);
+        toEditImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(CreatePost.this, PhotoEditingActivity.class);
+                intent.putExtra("imageUri", mImageUri.toString());
+                startActivity(intent);
+            }
+        });
     }
 
     private void selectImage(){
@@ -117,14 +122,6 @@ public class CreatePost extends AppCompatActivity {
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         return mime.getExtensionFromMimeType(cR.getType(uri));
 
-        toEditImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(CreatePost.this, PhotoEditingActivity.class);
-                intent.putExtra("imageUri", imageUri.toString());
-                startActivity(intent);
-            }
-        });
     }
 
     private void createPost(){
@@ -161,6 +158,7 @@ public class CreatePost extends AppCompatActivity {
         }else {
             showToast("No file selected");
         }
+    }
 
 
         private void upLoadToPostCollection(){
@@ -231,27 +229,27 @@ public class CreatePost extends AppCompatActivity {
 
     //After picked an image from device you will need to receive the result when perform the pick image action
     //The result is the image
-    private final ActivityResultLauncher<Intent> pickImage = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if(result.getResultCode() == RESULT_OK) {
-                    //When the data was found (or the image has been chosen)
-                    if(result.getData() != null){
-                        //We will set the URI of the image to grant read permission for the encodeImage function
-                        mImageUri = result.getData().getData();
-                            //Call the avatar frame to put the image in.
-                            binding.postImage.setImageBitmap(bitmap);
-                            //Disable the text Add Image in the avatar frame when there are a image
-                            binding.textAddImage.setVisibility(View.GONE);
-                            //Then call the encoded image function
-                            encodedImage = encodeImage(bitmap);
-                            // Throw exception when input image is fail
-                    }else {
-                        showToast("Cannot get the Image from the media file");
-                    }
-                }
-            }
-    );
+//    private final ActivityResultLauncher<Intent> pickImage = registerForActivityResult(
+//            new ActivityResultContracts.StartActivityForResult(),
+//            result -> {
+//                if(result.getResultCode() == RESULT_OK) {
+//                    //When the data was found (or the image has been chosen)
+//                    if(result.getData() != null){
+//                        //We will set the URI of the image to grant read permission for the encodeImage function
+//                        mImageUri = result.getData().getData();
+//                            //Call the avatar frame to put the image in.
+//                            binding.postImage.setImageBitmap(bitmap);
+//                            //Disable the text Add Image in the avatar frame when there are a image
+//                            binding.textAddImage.setVisibility(View.GONE);
+//                            //Then call the encoded image function
+//                            encodedImage = encodeImage(bitmap);
+//                            // Throw exception when input image is fail
+//                    }else {
+//                        showToast("Cannot get the Image from the media file");
+//                    }
+//                }
+//            }
+//    );
 
     // Set up the application notification for UI
     private void showToast(String message) {

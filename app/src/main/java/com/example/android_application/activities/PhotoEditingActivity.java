@@ -105,10 +105,14 @@ public class PhotoEditingActivity extends AppCompatActivity {
 
         // Set image
         Uri imageUri;
-        Intent intent = new Intent();
+        Intent intent = getIntent();
         imageUri = Uri.parse(intent.getStringExtra("imageUri"));
-//        mPhotoEditorView.getSource().setImageResource(R.drawable.cat);
-        mPhotoEditorView.getSource().setImageURI(imageUri);
+        if (imageUri != null){
+            mPhotoEditorView.getSource().setImageURI(imageUri);
+        } else {
+            mPhotoEditorView.getSource().setImageResource(R.drawable.cat);
+        }
+
 
         mPhotoEditor = new PhotoEditor.Builder(this, mPhotoEditorView)
                 .setPinchTextScalable(true)
