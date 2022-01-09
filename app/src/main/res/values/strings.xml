@@ -20,4 +20,6 @@
     <string name="login_with_gmail">login with gmail</string>
     <string name="fiaa">-FIAA-</string>
     <string name="create_post">create post</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -1,11 +1,11 @@
 package com.example.android_application.activities;
 
-import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Base64;
 import android.view.View;
 import android.webkit.MimeTypeMap;
@@ -30,6 +30,9 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -43,6 +46,9 @@ public class CreatePost extends AppCompatActivity {
     private StorageReference storageReference;
     private DatabaseReference databaseReference;
     private StorageTask storageTask;
+    private String encodedImage;
+    private Button toEditImage;
+    Uri imageUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +61,13 @@ public class CreatePost extends AppCompatActivity {
         databaseReference = FirebaseDatabase.getInstance().getReference("post");
         loadUserInfo();
         setListeners();
+
+        Intent intent = new Intent();
+        if (encodedImage != null){
+            encodedImage = intent.getStringExtra("image");
+        }
+
+        toEditImage = findViewById(R.id.toEditImageButton);
     }
 
     private void loadUserInfo() {
@@ -77,12 +90,7 @@ public class CreatePost extends AppCompatActivity {
 
         );
         binding.buttonCreatePost.setOnClickListener(v -> {
-            if (storageTask != null && storageTask.isInProgress()){
-                showToast("Uploading");
-            }else {
-                createPost();
-            }
-
+            createPost();
         });
         binding.buttonReturn.setOnClickListener(v-> onBackPressed());
     }
@@ -108,6 +116,15 @@ public class CreatePost extends AppCompatActivity {
         ContentResolver cR = getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         return mime.getExtensionFromMimeType(cR.getType(uri));
+
+        toEditImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(CreatePost.this, PhotoEditingActivity.class);
+                intent.putExtra("imageUri", imageUri.toString());
+                startActivity(intent);
+            }
+        });
     }
 
     private void createPost(){
@@ -144,7 +161,7 @@ public class CreatePost extends AppCompatActivity {
         }else {
             showToast("No file selected");
         }
-    }
+
 
         private void upLoadToPostCollection(){
         FirebaseFirestore database2 = FirebaseFirestore.getInstance();
@@ -199,6 +216,18 @@ public class CreatePost extends AppCompatActivity {
 //                });
 //        }
 
+    //Convert image from JPEG to Bytes by using bitmap and Android Base 64 encoder library to send to the database
+    private String encodeImage(Bitmap bitmap) {
+        //Reformat the image size to fit the avatar frame
+        int previewWidth = 150;
+        int previewHeight  = bitmap.getHeight() * previewWidth / bitmap.getWidth();
+        Bitmap previewBitmap = Bitmap.createScaledBitmap(bitmap, previewWidth,previewHeight,false);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        //Encode image from JPEG to string Bytes to add to the database
+        previewBitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
+        byte[] bytes = byteArrayOutputStream.toByteArray();
+        return Base64.encodeToString(bytes, Base64.DEFAULT);
+    }
 
     //After picked an image from device you will need to receive the result when perform the pick image action
     //The result is the image
@@ -211,10 +240,11 @@ public class CreatePost extends AppCompatActivity {
                         //We will set the URI of the image to grant read permission for the encodeImage function
                         mImageUri = result.getData().getData();
                             //Call the avatar frame to put the image in.
-                            binding.postImage.setImageURI(mImageUri);
+                            binding.postImage.setImageBitmap(bitmap);
                             //Disable the text Add Image in the avatar frame when there are a image
                             binding.textAddImage.setVisibility(View.GONE);
                             //Then call the encoded image function
+                            encodedImage = encodeImage(bitmap);
                             // Throw exception when input image is fail
                     }else {
                         showToast("Cannot get the Image from the media file");
