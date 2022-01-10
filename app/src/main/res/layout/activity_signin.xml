@@ -105,12 +105,6 @@
             android:textSize="@dimen/_13ssp"
             android:textStyle="bold"/>
 
-        <Button
-            android:id="@+id/toEditorButton"
-            android:layout_marginTop="5dp"
-            android:layout_width="40dp"
-            android:layout_height="100dp"/>
-
 
     </LinearLayout>
 

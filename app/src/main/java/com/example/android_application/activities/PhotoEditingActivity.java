@@ -41,7 +41,7 @@ import ja.burhanrashid52.photoeditor.ViewType;
 
 public class PhotoEditingActivity extends AppCompatActivity {
     PhotoEditorView mPhotoEditorView;
-    Button brushModeButton, undoButton, filterButton, textButton, exitButton, saveButton;
+    Button brushModeButton, undoButton, filterButton, textButton, exitButton, saveButton, saveTextButton;
     PhotoEditor mPhotoEditor;
     RangeSlider brushSizeRs, brushOpacityRs;
     FilterAdapter filterAdapter;
@@ -56,6 +56,8 @@ public class PhotoEditingActivity extends AppCompatActivity {
     ArrayList<String> filterNamesList = new ArrayList<>();
     ArrayList<PhotoFilter> filters = new ArrayList<>();
     ArrayList<Drawable> filterImagesList = new ArrayList<>();
+
+    String encodedImage;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -72,6 +74,7 @@ public class PhotoEditingActivity extends AppCompatActivity {
         textButton = findViewById(R.id.textButton);
         exitButton = findViewById(R.id.exitButton);
         saveButton = findViewById(R.id.saveButton);
+        saveTextButton = findViewById(R.id.saveButtonText);
 
         textEdit = findViewById(R.id.textAddition);
         rv = findViewById(R.id.filterRv);
@@ -80,28 +83,7 @@ public class PhotoEditingActivity extends AppCompatActivity {
         brushSizeRs = findViewById(R.id.brushSizeRs);
         brushOpacityRs = findViewById(R.id.brushOpacityRs);
 
-        brushSizeRs.addOnChangeListener(new RangeSlider.OnChangeListener() {
-            @Override
-            public void onValueChange(@NonNull RangeSlider slider, float value, boolean fromUser) {
-                int size = (int) value;
-                mPhotoEditor.setBrushSize(size);
-            }
-        });
 
-        brushOpacityRs.addOnChangeListener(new RangeSlider.OnChangeListener() {
-            @Override
-            public void onValueChange(@NonNull RangeSlider slider, float value, boolean fromUser) {
-                int opacity = (int) value;
-                mPhotoEditor.setOpacity(opacity);
-            }
-        });
-
-        saveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                savePhoto();
-            }
-        });
 
         // Set image
         Uri imageUri;
@@ -123,17 +105,80 @@ public class PhotoEditingActivity extends AppCompatActivity {
     }
 
     void setListener(){
+        brushSizeRs.addOnChangeListener(new RangeSlider.OnChangeListener() {
+            @Override
+            public void onValueChange(@NonNull RangeSlider slider, float value, boolean fromUser) {
+                int size = (int) value;
+                mPhotoEditor.setBrushSize(size);
+            }
+        });
+
+        brushOpacityRs.addOnChangeListener(new RangeSlider.OnChangeListener() {
+            @Override
+            public void onValueChange(@NonNull RangeSlider slider, float value, boolean fromUser) {
+                int opacity = (int) value;
+                mPhotoEditor.setOpacity(opacity);
+            }
+        });
+
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialog();
+            }
+        });
 
         textButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 textEdit.setVisibility(View.VISIBLE);
                 textEdit.setHint("Your Text Here...");
+                saveTextButton.setVisibility(View.VISIBLE);
 
-                mPhotoEditor.addText(textEdit.toString(), R.color.text1_color);
+                String inputText = textEdit.getText().toString();
+
+                mPhotoEditor.setOnPhotoEditorListener(new OnPhotoEditorListener() {
+                    @Override
+                    public void onEditTextChangeListener(View rootView, String text, int colorCode) {
+                        mPhotoEditor.editText(rootView, inputText, colorCode);
+                    }
+
+                    @Override
+                    public void onAddViewListener(ViewType viewType, int numberOfAddedViews) {
+
+                    }
+
+                    @Override
+                    public void onRemoveViewListener(ViewType viewType, int numberOfAddedViews) {
+
+                    }
+
+                    @Override
+                    public void onStartViewChangeListener(ViewType viewType) {
+
+                    }
+
+                    @Override
+                    public void onStopViewChangeListener(ViewType viewType) {
+
+                    }
+
+                    @Override
+                    public void onTouchSourceImage(MotionEvent event) {
+
+                    }
+                });
+//                mPhotoEditor.addText(textEdit.toString(), R.color.text1_color);
                 textButton.setEnabled(false);
                 filterButton.setEnabled(true);
                 brushModeButton.setEnabled(true);
+            }
+        });
+
+        saveTextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mPhotoEditor.addText(textEdit.getText().toString(), R.color.black);
             }
         });
 
@@ -145,6 +190,7 @@ public class PhotoEditingActivity extends AppCompatActivity {
 
                 brushModeButton.setEnabled(false);
                 filterButton.setEnabled(true);
+                textButton.setEnabled(true);
 
                 clearFilterList();
                 rv.setVisibility(View.GONE);
@@ -179,6 +225,7 @@ public class PhotoEditingActivity extends AppCompatActivity {
                 filterButton.setEnabled(false);
                 brushOptionsLayout.setVisibility(View.GONE);
                 brushModeButton.setEnabled(true);
+                textButton.setEnabled(true);
             }
         });
 
@@ -193,6 +240,7 @@ public class PhotoEditingActivity extends AppCompatActivity {
                 // Brush
                 brushOptionsLayout.setVisibility(View.GONE);
                 brushModeButton.setEnabled(true);
+                textButton.setEnabled(true);
                 mPhotoEditor.setBrushDrawingMode(false);
             }
         });
@@ -204,20 +252,19 @@ public class PhotoEditingActivity extends AppCompatActivity {
     }
 
     public void savePhoto(){
-        if (alertDialog()[0]){
             SaveSettings saveSettings = new SaveSettings.Builder()
                     .setClearViewsEnabled(true)
                     .setTransparencyEnabled(true)
                     .setCompressFormat(Bitmap.CompressFormat.JPEG)
-                    .setCompressQuality(50)
                     .build();
             mPhotoEditor.saveAsBitmap(saveSettings, new OnSaveBitmap() {
                 @Override
                 public void onBitmapReady(Bitmap saveBitmap) {
                     Intent intent = new Intent(PhotoEditingActivity.this, CreatePost.class);
-                    intent.putExtra("image", encodeImage(saveBitmap));
-                    startActivity(intent);
+                    intent.putExtra("imageBitmap", encodeImage(saveBitmap));
+                    startActivityForResult(intent, 727);
                     Log.e("PhotoEditor","Image Saved Successfully");
+                    Toast.makeText(PhotoEditingActivity.this, "Saving Success!", Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
@@ -225,10 +272,6 @@ public class PhotoEditingActivity extends AppCompatActivity {
                     Log.e("PhotoEditor","Failed to save Image");
                 }
             });
-        }
-        else {
-            Toast.makeText(PhotoEditingActivity.this, "Saving Cancelled!", Toast.LENGTH_SHORT).show();
-        }
     }
 
     private String encodeImage(Bitmap bitmap) {
@@ -243,8 +286,7 @@ public class PhotoEditingActivity extends AppCompatActivity {
         return Base64.encodeToString(bytes, Base64.DEFAULT);
     }
 
-    private boolean[] alertDialog(){
-        final boolean[] confirmation = {false};
+    private void alertDialog(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Photo Editor");
         builder.setMessage("Are you sure?");
@@ -252,17 +294,16 @@ public class PhotoEditingActivity extends AppCompatActivity {
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 dialog.dismiss();
-                confirmation[0] = true;
+                savePhoto();
             }
         });
         builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 dialog.dismiss();
-                confirmation[0] = false;
+                Toast.makeText(PhotoEditingActivity.this, "Cancelled", Toast.LENGTH_SHORT).show();
             }
         });
         AlertDialog alert = builder.create();
         alert.show();
-        return confirmation;
     }
 }

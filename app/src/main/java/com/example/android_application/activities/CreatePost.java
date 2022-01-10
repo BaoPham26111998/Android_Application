@@ -1,11 +1,13 @@
 package com.example.android_application.activities;
 
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.view.View;
@@ -34,7 +36,10 @@ import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
@@ -45,7 +50,7 @@ public class CreatePost extends AppCompatActivity {
     private ActivityCreatePostBinding binding;
     private PreferenceManager preferenceManager;
     private Uri mImageUri;
-    private String imageUrl;
+    private String imageUrl, imageBitmap;
     private StorageReference storageReference;
     private DatabaseReference databaseReference;
     private StorageTask storageTask;
@@ -62,6 +67,11 @@ public class CreatePost extends AppCompatActivity {
         databaseReference = FirebaseDatabase.getInstance().getReference("post");
         loadUserInfo();
         setListeners();
+        try {
+            setPostImage();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -117,6 +127,23 @@ public class CreatePost extends AppCompatActivity {
         }
     }
 
+    private void setPostImage () throws IOException {
+        Intent intent1 = getIntent();
+        if (intent1.getStringExtra("imageBitmap") != null){
+            imageBitmap = intent1.getStringExtra("imageBitmap");
+            byte[] bytes = Base64.decode(imageBitmap, Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+
+            mImageUri = getImageUri(bitmap);
+            binding.postImage.setImageURI(mImageUri);
+            binding.textAddImage.setVisibility(View.GONE);
+
+        }
+        else {
+            showToast("Image is empty");
+        }
+    }
+
     private String getFileExtension(Uri uri){
         ContentResolver cR = getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();
@@ -160,6 +187,27 @@ public class CreatePost extends AppCompatActivity {
         }
     }
 
+    public Uri getImageUri(Bitmap inImage) throws IOException {
+//        File tempDir= Environment.getExternalStorageDirectory();
+//        tempDir=new File(tempDir.getAbsolutePath()+"/.temp/");
+//        tempDir.mkdir();
+//        File tempFile = File.createTempFile("tempImg", ".jpg", tempDir);
+//        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+//        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+//        byte[] bitmapData = bytes.toByteArray();
+//
+//        //write the bytes in file
+//        FileOutputStream fos = new FileOutputStream(tempFile);
+//        fos.write(bitmapData);
+//        fos.flush();
+//        fos.close();
+//        return Uri.fromFile(tempFile);
+
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(this.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
 
         private void upLoadToPostCollection(){
         FirebaseFirestore database2 = FirebaseFirestore.getInstance();

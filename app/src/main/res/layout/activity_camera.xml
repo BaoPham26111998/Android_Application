@@ -22,17 +22,6 @@
 
     <!--        BRUSH OPTIONS        -->
 
-    <Button
-        android:id="@+id/undoButton"
-        android:layout_width="wrap_content"
-
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:text="Undo"
-        app:layout_constraintBottom_toBottomOf="@+id/saveButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/saveButton"></Button>
 
     <Button
         android:id="@+id/filterButton"
@@ -71,16 +60,43 @@
         app:layout_constraintStart_toStartOf="parent"></Button>
 
     <Button
+        android:id="@+id/undoButton"
+        android:layout_width="wrap_content"
+
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="8dp"
+
+        android:text="Undo"
+        app:layout_constraintBottom_toTopOf="@+id/photoEditorView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/saveButton"></Button>
+
+    <Button
         android:id="@+id/saveButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
+        android:layout_marginBottom="8dp"
         android:backgroundTint="@color/black"
-        android:layout_marginBottom="20dp"
         android:text="Save"
         app:layout_constraintBottom_toTopOf="@+id/photoEditorView"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/undoButton"
+        app:layout_constraintStart_toEndOf="@id/saveButtonText"></Button>
+
+    <Button
+        android:id="@+id/saveButtonText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="8dp"
+        android:visibility="gone"
+        android:text="Save Text"
+        app:layout_constraintBottom_toTopOf="@+id/photoEditorView"
+        app:layout_constraintEnd_toStartOf="@id/saveButton"
         app:layout_constraintStart_toStartOf="parent"></Button>
 
     <RelativeLayout
@@ -133,12 +149,13 @@
 
     <!--        FILTER RV        -->
     <HorizontalScrollView
+        android:id="@+id/horizontalScrollView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/filterRv"
@@ -153,20 +170,24 @@
     <ja.burhanrashid52.photoeditor.PhotoEditorView
         android:id="@+id/photoEditorView"
         android:layout_width="match_parent"
-        android:layout_height="350dp"
+        android:layout_height="300dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <EditText
-            android:id="@+id/textAddition"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:visibility="gone" />
-
     </ja.burhanrashid52.photoeditor.PhotoEditorView>
+
+    <EditText
+        android:id="@+id/textAddition"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/horizontalScrollView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/filterButton" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
