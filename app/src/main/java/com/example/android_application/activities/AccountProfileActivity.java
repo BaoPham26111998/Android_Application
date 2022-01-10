@@ -59,17 +59,29 @@ public class AccountProfileActivity extends AppCompatActivity {
                         }
                     }
                 });
-        //Load user name
-        binding.profileName.setText(preferenceManager.getString(Constants.NAME));
-        //Load image
-        byte[] bytes = Base64.decode(preferenceManager.getString(Constants.IMAGE), Base64.DEFAULT);
-        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-        binding.imageProfile.setImageBitmap(bitmap);
-        binding.displayName.setText(preferenceManager.getString(Constants.NAME));
+
+        database.collection(Constants.COLLECTION_USERS).document(preferenceManager.getString(Constants.USER_ID))
+                .get()
+                .addOnCompleteListener(task -> {
+                    binding.profileName.setText(task.getResult().getString(Constants.NAME));
+                    //Load imageimage
+                    String imageString = task.getResult().getString(Constants.IMAGE);
+                    byte[] bytes = Base64.decode(task.getResult().getString(Constants.IMAGE), Base64.DEFAULT);
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    binding.imageProfile.setImageBitmap(bitmap);
+                    binding.displayName.setText(task.getResult().getString(Constants.NAME));
+                    binding.description.setText(task.getResult().getString(Constants.USER_DESCRIPTION));
+                    binding.website.setText(task.getResult().getString(Constants.USER_WEBSITE));
+                })
+                .addOnFailureListener(exception ->{
+                    loading(false);
+                    showToast(exception.getMessage());
+                });
+
     }
     private void setListeners(){
         //log out by click in to the icon on the top right corner
-        binding.backButton.setOnClickListener(v -> onBackPressed());
+        binding.backButton.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(),MainActivity.class)));
         binding.gridview1.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -81,7 +93,7 @@ public class AccountProfileActivity extends AppCompatActivity {
                         .putExtra(Constants.POST_IMAGE_ID,postId));
             }
         });
-
+        binding.editProfile.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(),EditAccountProfile.class)));
     }
 
     private void setPhotoGridView(){

@@ -9,16 +9,21 @@ import android.view.View;
 import android.widget.AdapterView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.android_application.adapters.ProfileAccountPostsAdapter;
 import com.example.android_application.databinding.ActivityPostAccountProfileBinding;
 import com.example.android_application.models.Post;
 import com.example.android_application.ultilities.Constants;
+import com.example.android_application.ultilities.PreferenceManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -31,10 +36,11 @@ public class PostAccountProfileActivity extends AppCompatActivity {
     List<Post> posts = new ArrayList<>();
     private String userId;
 
-
+    PreferenceManager preferenceManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        preferenceManager = new PreferenceManager(getApplicationContext());
         binding = ActivityPostAccountProfileBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -44,6 +50,7 @@ public class PostAccountProfileActivity extends AppCompatActivity {
         setListeners();
         loadUserInfo();
         setPhotoGridView();
+        setFollowListener();
 
     }
 
@@ -61,7 +68,48 @@ public class PostAccountProfileActivity extends AppCompatActivity {
                         .putExtra(Constants.POST_IMAGE_ID,postId));
             }
         });
+        binding.followButton.setOnClickListener(v -> follow());
+        binding.unfollowButton.setOnClickListener(v -> unfollow());
 
+    }
+
+    private void setFollowListener(){
+        FirebaseFirestore database = FirebaseFirestore.getInstance();
+        database.collection(Constants.COLLECTION_USERS).document(userId)
+                .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable DocumentSnapshot snapshot, @Nullable FirebaseFirestoreException error) {
+                        List<String> followerList = (List<String>) snapshot.get("userFollowed");
+                        Integer followLength = followerList.size();
+                        binding.txtFollowers.setText(followLength.toString());
+                        System.out.println("Listen on change of user Id: " + userId);
+                        if (followerList.contains(userId)){
+                            binding.followButton.setVisibility(View.GONE);
+                            binding.unfollowButton.setVisibility(View.VISIBLE);
+                        }else{
+                            binding.followButton.setVisibility(View.VISIBLE);
+                            binding.unfollowButton.setVisibility(View.GONE);
+                        }
+                    }
+                });
+//                .get()
+//                .addOnCompleteListener(task -> {
+//                    if (task.isSuccessful() && task.getResult() != null){
+//                        DocumentSnapshot documentSnapshot = task.getResult();
+//                        List<String> followerList = (List<String>) documentSnapshot.get("userFollowed");
+//                        Integer followLength = followerList.size();
+//                        System.out.println("Hello follow list lenght: " + followLength.toString());
+//                        binding.txtFollowers.setText(followLength.toString());
+//                        if (followerList.contains(userId)){
+//                            binding.followButton.setVisibility(View.GONE);
+//                            binding.unfollowButton.setVisibility(View.VISIBLE);
+//                        }else {
+//                            binding.followButton.setVisibility(View.VISIBLE);
+//                            binding.unfollowButton.setVisibility(View.GONE);
+//                        }
+//
+//                    }
+//                });
     }
 
     private void loadUserInfo(){
@@ -126,6 +174,41 @@ public class PostAccountProfileActivity extends AppCompatActivity {
 
                 });
 
+    }
+
+    private void follow(){
+        FirebaseFirestore database = FirebaseFirestore.getInstance();
+        ArrayList list = new ArrayList();
+        list.add(preferenceManager.getString(Constants.USER_ID));
+        database.collection(Constants.COLLECTION_USERS)
+                .document(userId)
+                .update("userFollowed", FieldValue.arrayUnion(list.toArray()));
+        binding.followButton.setVisibility(View.GONE);
+        binding.unfollowButton.setVisibility(View.VISIBLE);
+
+        ArrayList list2 = new ArrayList();
+        list2.add(userId);
+        database.collection(Constants.COLLECTION_USERS)
+                .document(preferenceManager.getString(Constants.USER_ID))
+                .update("followingUser", FieldValue.arrayUnion(list2.toArray()));
+
+    }
+
+    private void unfollow(){
+        FirebaseFirestore database = FirebaseFirestore.getInstance();
+        ArrayList list = new ArrayList();
+        list.add(preferenceManager.getString(Constants.USER_ID));
+        database.collection(Constants.COLLECTION_USERS)
+                .document(userId)
+                .update("userFollowed", FieldValue.arrayRemove(list.toArray()));
+        binding.followButton.setVisibility(View.VISIBLE);
+        binding.unfollowButton.setVisibility(View.GONE);
+
+        ArrayList list2 = new ArrayList();
+        list2.add(userId);
+        database.collection(Constants.COLLECTION_USERS)
+                .document(preferenceManager.getString(Constants.USER_ID))
+                .update("followingUser", FieldValue.arrayRemove(list2.toArray()));
     }
 
     private void loading(Boolean loading){

@@ -14,6 +14,8 @@ public class Constants {
     public static final String USER_ID = "userId";
     public static final String IMAGE= "image";
     public static final String USER = "user";
+    public static final String USER_DESCRIPTION = "userDescription";
+    public static final String USER_WEBSITE = "userWebsite";
 
     //Chat app preference
     public static final String PREFERENCE_NAME = "chatAppPreference";
