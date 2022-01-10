@@ -11,7 +11,6 @@ import com.example.android_application.databinding.PostItemBinding;
 import com.example.android_application.listeners.PostListener;
 import com.example.android_application.models.Post;
 import com.example.android_application.ultilities.Constants;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -134,13 +133,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             list.add(mAuth.getUid());
             database.collection(Constants.COLLECTION_POST)
                     .document(post.postId)
-                    .update("userLiked",FieldValue.arrayRemove(list.toArray()))
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void unused) {
-                            System.out.println("unlike success");
-                        }
-                    });
+                    .update("userLiked",FieldValue.arrayRemove(list.toArray()));
 
         }
     }
