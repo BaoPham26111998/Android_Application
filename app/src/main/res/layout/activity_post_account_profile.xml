@@ -209,7 +209,22 @@
                     android:textAllCaps="false"
                     android:textColor="@color/black"
                     android:textSize="18sp"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold"
+                    android:visibility="visible"/>
+
+                <TextView
+                    android:id="@+id/unfollowButton"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="25dp"
+                    android:layout_gravity="end"
+                    android:background="@drawable/btn_shape_1"
+                    android:text="Unfollow"
+                    android:textAllCaps="false"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:visibility="gone"/>
 
 
             </LinearLayout>

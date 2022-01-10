@@ -81,6 +81,7 @@ public class SignInActivity extends AppCompatActivity {
                                     preferenceManager.putString(Constants.USER_ID, documentSnapshot.getId());
                                     preferenceManager.putString(Constants.NAME, documentSnapshot.getString(Constants.NAME));
                                     preferenceManager.putString(Constants.IMAGE, documentSnapshot.getString(Constants.IMAGE));
+                                    preferenceManager.putString(Constants.EMAIL,documentSnapshot.getString(Constants.EMAIL));
                                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                     startActivity(intent);

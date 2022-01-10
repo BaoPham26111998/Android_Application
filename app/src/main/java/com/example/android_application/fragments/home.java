@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.android_application.R;
+import com.example.android_application.activities.AccountProfileActivity;
 import com.example.android_application.activities.PostAccountProfileActivity;
 import com.example.android_application.adapters.PostAdapter;
 import com.example.android_application.adapters.StoryAdapter;
@@ -131,12 +132,16 @@ public class home extends Fragment implements PostListener {
                             if (documentChange.getType() == DocumentChange.Type.MODIFIED){
                                 List<String> userList = (List<String>) documentChange.getDocument().get(Constants.POST_USER_LIKE);
                                 Integer likeLength = userList.size();
+                                String imageString = documentChange.getDocument().getString(Constants.IMAGE);
                                 System.out.println(posts.size());
                                 for(int i=0; i<posts.size();i++){
                                     String postId = documentChange.getDocument().getId();
                                     if(posts.get(i).postId.equals(postId)){
                                         System.out.println(postId);
                                         posts.get(i).likeCount = likeLength.toString() +" likes";
+                                        byte[] bytes = Base64.decode(imageString, Base64.DEFAULT);
+                                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                                        posts.get(i).imageProfile = bitmap;
                                         System.out.println(posts.get(i).likeCount);
 
                                         break;
@@ -161,9 +166,18 @@ public class home extends Fragment implements PostListener {
     public void onImageProfileClicked(Post post) {
         String postId = post.postId;
         String userId = post.userId;
-        Intent intent = new Intent(getActivity(), PostAccountProfileActivity.class)
-                .putExtra(Constants.POST_IMAGE_ID,postId)
-                .putExtra(Constants.USER_ID,userId);
-        startActivity(intent);
+        if(userId.equals(preferenceManager.getString(Constants.USER_ID))){
+            Intent intent = new Intent(getActivity(), AccountProfileActivity.class)
+                    .putExtra(Constants.POST_IMAGE_ID,postId)
+                    .putExtra(Constants.USER_ID,userId);
+            startActivity(intent);
+        }
+        else {
+            Intent intent = new Intent(getActivity(), PostAccountProfileActivity.class)
+                    .putExtra(Constants.POST_IMAGE_ID,postId)
+                    .putExtra(Constants.USER_ID,userId);
+            startActivity(intent);
+        }
+
     }
 }

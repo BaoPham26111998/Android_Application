@@ -70,6 +70,9 @@ dependencies {
     //Dependency for circular image
     implementation 'com.mikhaellopez:circularimageview:4.2.0'
 
+    //Photo editor
+    implementation 'com.burhanrashid52:photoeditor:1.5.1'
+
     // navigation
     implementation 'androidx.navigation:navigation-fragment:2.0.0'
     implementation 'androidx.navigation:navigation-ui:2.0.0'
@@ -77,5 +80,4 @@ dependencies {
     implementation 'com.firebaseui:firebase-ui-storage:7.2.0'
 
     implementation 'com.squareup.picasso:picasso:2.71828'
-
 }

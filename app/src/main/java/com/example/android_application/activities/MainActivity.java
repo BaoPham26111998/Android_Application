@@ -94,12 +94,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadUserInfo() {
-        //Load user name
-        binding.textName.setText(preferenceManager.getString(Constants.NAME));
-        //Load image
-        byte[] bytes = Base64.decode(preferenceManager.getString(Constants.IMAGE), Base64.DEFAULT);
-        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-        binding.imageProfile.setImageBitmap(bitmap);
+        FirebaseFirestore database = FirebaseFirestore.getInstance();
+        database.collection(Constants.COLLECTION_USERS).document(preferenceManager.getString(Constants.USER_ID))
+                .get()
+                .addOnCompleteListener(task -> {
+                    binding.textName.setText(task.getResult().getString(Constants.NAME));
+                    //Load imageimage
+                    String imageString = task.getResult().getString(Constants.IMAGE);
+                    byte[] bytes = Base64.decode(task.getResult().getString(Constants.IMAGE), Base64.DEFAULT);
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    binding.imageProfile.setImageBitmap(bitmap);
+
+                });
     }
 
     // Set up the application notification for UI

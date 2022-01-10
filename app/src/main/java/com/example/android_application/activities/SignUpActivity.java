@@ -27,7 +27,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class SignUpActivity extends AppCompatActivity {
@@ -96,6 +95,7 @@ public class SignUpActivity extends AppCompatActivity {
                             preferenceManager.putString(Constants.NAME,binding.inputName.getText().toString());
                             preferenceManager.putString(Constants.IMAGE,encodedImage);
                             preferenceManager.putString(Constants.USER_ID,documentReference.getId());
+                            preferenceManager.putString(Constants.EMAIL,binding.inputEmail.getText().toString());
                             Intent intent = new Intent(getApplicationContext(),MainActivity.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(intent);

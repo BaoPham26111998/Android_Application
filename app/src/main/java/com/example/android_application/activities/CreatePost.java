@@ -116,26 +116,26 @@ public class CreatePost extends AppCompatActivity {
             loading(true);
             StorageReference fileReference = storageReference.child(
                     System.currentTimeMillis()+"."+getFileExtension(mImageUri));
-                    storageTask = fileReference.putFile(mImageUri)
-                            .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            storageTask = fileReference.putFile(mImageUri)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            loading(false);
+
+                            fileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
-                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                    loading(false);
-
-                                    fileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                        @Override
-                                        public void onSuccess(Uri uri) {
-                                            imageUrl = uri.toString();
-                                            upLoadToPostCollection();
-                                        }
-                                    });
-
-                                    Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                    startActivity(intent);
-                                    showToast("Upload successful");
+                                public void onSuccess(Uri uri) {
+                                    imageUrl = uri.toString();
+                                    upLoadToPostCollection();
                                 }
-                            }).addOnFailureListener(new OnFailureListener() {
+                            });
+
+                            Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
+                            showToast("Upload successful");
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             loading(false);
@@ -147,27 +147,27 @@ public class CreatePost extends AppCompatActivity {
         }
     }
 
-        private void upLoadToPostCollection(){
+    private void upLoadToPostCollection(){
         FirebaseFirestore database2 = FirebaseFirestore.getInstance();
-            HashMap<String, Object> postArray = new HashMap<>();
-            postArray.put(Constants.POST_IMAGE_URL,imageUrl);
-            postArray.put(Constants.POST_TITLE,binding.inputTitle.getText().toString());
-            postArray.put(Constants.POST_DESCRIPTION,binding.inputDescription.getText().toString());
-            postArray.put(Constants.USER_ID,preferenceManager.getString(Constants.USER_ID));
-            postArray.put(Constants.NAME,preferenceManager.getString(Constants.NAME));
-            postArray.put(Constants.IMAGE,preferenceManager.getString(Constants.IMAGE));
-            postArray.put(Constants.POST_LIKE,0);
-            postArray.put(Constants.POST_COMMENT,0);
-            postArray.put(Constants.TIMESTAMP,new Date());
-            ArrayList<Object> arrayLike = new ArrayList<>();
-            postArray.put("userLiked", arrayLike);
+        HashMap<String, Object> postArray = new HashMap<>();
+        postArray.put(Constants.POST_IMAGE_URL,imageUrl);
+        postArray.put(Constants.POST_TITLE,binding.inputTitle.getText().toString());
+        postArray.put(Constants.POST_DESCRIPTION,binding.inputDescription.getText().toString());
+        postArray.put(Constants.USER_ID,preferenceManager.getString(Constants.USER_ID));
+        postArray.put(Constants.NAME,preferenceManager.getString(Constants.NAME));
+        postArray.put(Constants.IMAGE,preferenceManager.getString(Constants.IMAGE));
+        postArray.put(Constants.POST_LIKE,0);
+        postArray.put(Constants.POST_COMMENT,0);
+        postArray.put(Constants.TIMESTAMP,new Date());
+        ArrayList<Object> arrayLike = new ArrayList<>();
+        postArray.put("userLiked", arrayLike);
         database2.collection(Constants.COLLECTION_POST).add(postArray)
                 .addOnSuccessListener(task -> {
                     showToast("Post added to firebase");
                 }).addOnFailureListener(task ->{
-                    showToast("Post add fail");
+            showToast("Post add fail");
         });
-        }
+    }
 
     //    private void createPost(){
 //        loading(true);
@@ -211,12 +211,12 @@ public class CreatePost extends AppCompatActivity {
                     if(result.getData() != null){
                         //We will set the URI of the image to grant read permission for the encodeImage function
                         mImageUri = result.getData().getData();
-                            //Call the avatar frame to put the image in.
-                            binding.postImage.setImageURI(mImageUri);
-                            //Disable the text Add Image in the avatar frame when there are a image
-                            binding.textAddImage.setVisibility(View.GONE);
-                            //Then call the encoded image function
-                            // Throw exception when input image is fail
+                        //Call the avatar frame to put the image in.
+                        binding.postImage.setImageURI(mImageUri);
+                        //Disable the text Add Image in the avatar frame when there are a image
+                        binding.textAddImage.setVisibility(View.GONE);
+                        //Then call the encoded image function
+                        // Throw exception when input image is fail
                     }else {
                         showToast("Cannot get the Image from the media file");
                     }
