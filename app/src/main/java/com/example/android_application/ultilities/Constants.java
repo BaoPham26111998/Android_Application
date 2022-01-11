@@ -16,6 +16,8 @@ public class Constants {
     public static final String USER = "user";
     public static final String USER_DESCRIPTION = "userDescription";
     public static final String USER_WEBSITE = "userWebsite";
+    public static final String USER_FOLLOWERS = "userFollowed";
+    public static final String USER_FOLLOWING = "followingUser";
 
     //Chat app preference
     public static final String PREFERENCE_NAME = "chatAppPreference";

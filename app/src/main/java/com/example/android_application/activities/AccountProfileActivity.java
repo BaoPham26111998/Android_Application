@@ -68,10 +68,19 @@ public class AccountProfileActivity extends AppCompatActivity {
                     String imageString = task.getResult().getString(Constants.IMAGE);
                     byte[] bytes = Base64.decode(task.getResult().getString(Constants.IMAGE), Base64.DEFAULT);
                     Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+
+                    List<String> followingList = (List<String>) task.getResult().get("followingUser");
+                    Integer followingLength = followingList.size();
+
+                    List<String> followerList = (List<String>) task.getResult().get("userFollowed");
+                    Integer followerLength = followerList.size();
+
                     binding.imageProfile.setImageBitmap(bitmap);
                     binding.displayName.setText(task.getResult().getString(Constants.NAME));
                     binding.description.setText(task.getResult().getString(Constants.USER_DESCRIPTION));
                     binding.website.setText(task.getResult().getString(Constants.USER_WEBSITE));
+                    binding.txtFollowing.setText(followingLength.toString());
+                    binding.txtFollowers.setText(followerLength.toString());
                 })
                 .addOnFailureListener(exception ->{
                     loading(false);
@@ -82,6 +91,16 @@ public class AccountProfileActivity extends AppCompatActivity {
     private void setListeners(){
         //log out by click in to the icon on the top right corner
         binding.backButton.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(),MainActivity.class)));
+        binding.FragmentProfileFollowingLinearLayout.setOnClickListener(v -> startActivity(
+                new Intent(getApplicationContext(), AccountFollowingList.class)
+                        .putExtra(Constants.USER_ID,preferenceManager.getString(Constants.USER_ID)))
+               );
+        binding.FragmentProfileFollowerLinearLayout.setOnClickListener(v -> startActivity(
+                new Intent(getApplicationContext(), AccountFollowerList.class)
+                        .putExtra(Constants.USER_ID,preferenceManager.getString(Constants.USER_ID))
+        ));
+
+
         binding.gridview1.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -94,6 +113,7 @@ public class AccountProfileActivity extends AppCompatActivity {
             }
         });
         binding.editProfile.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(),EditAccountProfile.class)));
+
     }
 
     private void setPhotoGridView(){
