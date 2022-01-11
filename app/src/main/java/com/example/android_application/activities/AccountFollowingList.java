@@ -91,9 +91,18 @@ public class AccountFollowingList extends AppCompatActivity implements ChatUserL
 
     @Override
     public void onUserClicked(User user) {
-        Intent intent = new Intent(getApplicationContext(), PostAccountProfileActivity.class);
-        intent.putExtra(Constants.USER_ID, user.id);
-        startActivity(intent);
-        finish();
+        if(user.id.equals(preferenceManager.getString(Constants.USER_ID))){
+            Intent intent = new Intent(getApplicationContext(), AccountProfileActivity.class);
+            intent.putExtra(Constants.USER_ID, user.id);
+            startActivity(intent);
+            finish();
+        }
+        else {
+            Intent intent = new Intent(getApplicationContext(), PostAccountProfileActivity.class);
+            intent.putExtra(Constants.USER_ID, user.id);
+            startActivity(intent);
+            finish();
+        }
+
     }
 }

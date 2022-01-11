@@ -21,12 +21,12 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class ProfileAccountPostClicked extends AppCompatActivity {
     ActivityProfileAccountPostClickedBinding binding;
     String postId;
     PreferenceManager preferenceManager;
+    ArrayList<String> userIdList = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +51,7 @@ public class ProfileAccountPostClicked extends AppCompatActivity {
             binding.feedsPostLike.setVisibility(View.GONE);
             binding.feedsPostLiked.setVisibility(View.VISIBLE);
         });
+
     }
 
     private void loadPostInfo(){
@@ -68,16 +69,20 @@ public class ProfileAccountPostClicked extends AppCompatActivity {
                        Picasso.get().load(snapshot.getString(Constants.POST_IMAGE_URL)).into(binding.postImage);
                        binding.profileImage.setImageBitmap(bitmap);
                        binding.profileName.setText(snapshot.getString(Constants.NAME));
-                       List<String> userList = (List<String>) snapshot.get(Constants.POST_USER_LIKE);
-                       Integer likeLength = userList.size();
+                       ArrayList<String> userIdList = (ArrayList<String>) snapshot.get(Constants.POST_USER_LIKE);
+                       Integer likeLength = userIdList.size();
                        binding.feedsLikesCount.setText(likeLength.toString() + " likes");
                        binding.profileDate.setText(snapshot.getDate(Constants.TIMESTAMP).toString());
                        binding.postTitle.setText(snapshot.getString(Constants.POST_TITLE));
                        binding.postDescription.setText(snapshot.getString(Constants.POST_DESCRIPTION));
-                       if(userList.contains(preferenceManager.getString(Constants.USER_ID))){
+                       if(userIdList.contains(preferenceManager.getString(Constants.USER_ID))){
                            binding.feedsPostLike.setVisibility(View.GONE);
                            binding.feedsPostLiked.setVisibility(View.VISIBLE);
                        }
+                       binding.feedsLikesCount.setOnClickListener(v -> startActivity(new
+                               Intent(getApplicationContext(),AccountPostLikedList.class)
+                               .putExtra(Constants.POST_USER_LIKE,userIdList)
+                       ));
                         }
                     }
                 });
