@@ -17,6 +17,15 @@
         android:theme="@style/Theme.Android_application"
         tools:replace="android:label">
         <activity
+            android:name=".activities.AccountPostLikedList"
+            android:exported="false" />
+        <activity
+            android:name=".activities.AccountFollowerList"
+            android:exported="false" />
+        <activity
+            android:name=".activities.AccountFollowingList"
+            android:exported="false" />
+        <activity
             android:name=".activities.EditAccountProfile"
             android:exported="false" />
         <activity
