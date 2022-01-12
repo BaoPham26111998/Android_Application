@@ -5,10 +5,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Base64;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.android_application.adapters.CommentAdapter;
 import com.example.android_application.databinding.ActivityPostCommentListBinding;
@@ -29,7 +31,8 @@ import java.util.List;
 public class PostCommentList extends AppCompatActivity  {
     ActivityPostCommentListBinding binding;
     PreferenceManager preferenceManager;
-    List<Comment> comments = new ArrayList<>();
+    List<Comment> commentList = new ArrayList<>();
+
     String postId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +42,15 @@ public class PostCommentList extends AppCompatActivity  {
         setContentView(binding.getRoot());
         Intent intent = getIntent();
         postId = intent.getStringExtra(Constants.POST_IMAGE_ID);
+
+        binding.commentRecycleView.setHasFixedSize(true);
+        binding.commentRecycleView.setLayoutManager(new LinearLayoutManager(this));
+
+
+
         getCurrentUserInfo();
         setCommentList();
+
     }
 
     private void getCurrentUserInfo(){
@@ -56,7 +66,9 @@ public class PostCommentList extends AppCompatActivity  {
                 });
     }
 
+
     private void setCommentList() {
+
         FirebaseFirestore database = FirebaseFirestore.getInstance();
         database.collection(Constants.COLLECTION_POST)
                 .document(postId)
@@ -66,39 +78,33 @@ public class PostCommentList extends AppCompatActivity  {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.getResult() != null) {
+                            List<Comment> commentList = new ArrayList<>();
                             for (DocumentSnapshot documentSnapshot : task.getResult()) {
                                 Comment commentObject = new Comment();
                                 commentObject.commentString = documentSnapshot.getString("commentString");
                                 commentObject.name = documentSnapshot.getString("name");
                                 commentObject.userId = documentSnapshot.getString("userId");
-                                commentObject.imageProfile = documentSnapshot.getString("imageProfile");
+                                commentObject.imageProfile = documentSnapshot.getString("image");
+                                System.out.println(documentSnapshot.getString("commentString"));
                                 System.out.println(documentSnapshot.getString("name"));
                                 System.out.println(documentSnapshot.getString("userId"));
                                 System.out.println(documentSnapshot.getString("image"));
+                                commentList.add(commentObject);
 
-                                comments.add(commentObject);
                             }
-                            System.out.println(comments.toString());
+                            if(commentList.size() > 0){
+                                System.out.println(commentList.size());
+                                CommentAdapter commentAdapter = new CommentAdapter(commentList);
+                                binding.commentRecycleView.setAdapter(commentAdapter);
+                                binding.commentRecycleView.setVisibility(View.VISIBLE);
+                            }
+
                         }
+
                     }
 
                 });
-        CommentAdapter commentAdapter = new CommentAdapter(comments);
-        binding.commentsRecycleView.setAdapter(commentAdapter);
-//        binding.progressBar.setVisibility(View.GONE);
 
     }
 
-
-//                            commentArrayList = (ArrayList<Comment>) value.get("comments");
-
-////                            System.out.println(commentArrayList.toString());
-//                            for(int i =0; i<=commentArrayList.size();i++){
-//                                System.out.println(commentArrayList.get(i).);
-//
-////                                commentObject.commentString= commentArrayList.get(i).commentString;
-////                                commentObject.name = commentArrayList.get(i).name;
-////                                commentObject.userId = commentArrayList.get(i).userId;
-////                                commentObject.imageProfile = commentArrayList.get(i).imageProfile;
-////                                comments.add(commentArrayList.get(i));
 }
