@@ -123,9 +123,19 @@
                     android:src="@drawable/heart" />
 
                 <ImageView
+                    android:layout_width="20dp"
+                    android:layout_margin="5dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_comment"
+                    android:layout_toEndOf="@id/feeds_post_liked"
+                    android:layout_marginStart="10dp"
+                    android:id="@+id/comment"/>
+
+                <ImageView
                     android:id="@+id/feeds_post_share"
                     android:layout_width="20dp"
                     android:layout_marginVertical="5dp"
+                    android:layout_toEndOf="@id/comment"
                     android:layout_marginLeft="5dp"
                     android:layout_height="20dp"
                     android:tint="#000"
@@ -183,6 +193,16 @@
                     android:layout_height="wrap_content"
                     android:textSize="13sp"
                     android:text="3 Shares"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:id="@+id/no_of_comments"
+                    android:textColor="@color/colorAccent"/>
+
             </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>

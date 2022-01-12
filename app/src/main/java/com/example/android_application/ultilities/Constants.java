@@ -6,6 +6,7 @@ public class Constants {
     // Fire store collection
     public static final String COLLECTION_USERS = "users";
     public  static final String COLLECTION_POST = "posts";
+    public static final String COLLECTION_COMMENT = "comments";
 
     //User info
     public static final String NAME = "name";
@@ -55,4 +56,8 @@ public class Constants {
     public static final String KEY_RECEIVER_IMAGE = "receiverImage";
     public static final String KEY_LAST_MESSAGE = "lastMessage";
 
+
+    // Comment constants
+    public static final String COMMENT = "comment";
+    public static final String POST_ID = "postId";
 }

@@ -74,6 +74,7 @@ public class AdapterVideo extends RecyclerView.Adapter<AdapterVideo.HolderView> 
         MediaController mediaController = new MediaController(context);
         mediaController.setAnchorView(holder.videoView);
 
+
         Uri videoUri = Uri.parse(videoUrl);
         holder.videoView.setMediaController(mediaController);
         holder.videoView.setVideoURI(videoUri);

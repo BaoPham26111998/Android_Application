@@ -3,6 +3,18 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Dell/Downloads/Android_application/app/src/main/res/drawable-hdpi/follow_button.xml" value="0.12685185185185185" />
+        <entry key="..\:/Users/Dell/Downloads/Android_application/app/src/main/res/drawable/edit_text_border.xml" value="0.21614583333333334" />
+        <entry key="..\:/Users/Dell/Downloads/Android_application/app/src/main/res/layout/activity_comment.xml" value="0.2" />
+        <entry key="..\:/Users/Dell/Downloads/Android_application/app/src/main/res/layout/activity_home.xml" value="0.25" />
+        <entry key="..\:/Users/Dell/Downloads/Android_application/app/src/main/res/layout/activity_signin.xml" value="0.2" />
+        <entry key="..\:/Users/Dell/Downloads/Android_application/app/src/main/res/layout/comment_item.xml" value="0.4" />
+        <entry key="..\:/Users/Dell/Downloads/Android_application/app/src/main/res/layout/comment_sample.xml" value="0.2713541666666667" />
+        <entry key="..\:/Users/Dell/Downloads/Android_application/app/src/main/res/layout/fragment_home.xml" value="0.25" />
+        <entry key="..\:/Users/Dell/Downloads/Android_application/app/src/main/res/layout/item_container_post.xml" value="0.25" />
+        <entry key="..\:/Users/Dell/Downloads/Android_application/app/src/main/res/layout/item_container_sent_message.xml" value="0.27447916666666666" />
+        <entry key="..\:/Users/Dell/Downloads/Android_application/app/src/main/res/layout/post_item.xml" value="0.1" />
+        <entry key="..\:/Users/Dell/Downloads/Android_application/app/src/main/res/layout/row_video.xml" value="0.1" />
         <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/drawable/background_chat_input.xml" value="0.15" />
         <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/drawable/background_content_bottom.xml" value="0.2712820512820513" />
         <entry key="..\:/Users/baoph/AndroidStudioProjects/Android_application/app/src/main/res/drawable/background_icon.xml" value="0.2657407407407407" />
@@ -46,5 +58,12 @@
   </component>
   <component name="ProjectType">
     <option name="id" value="Android" />
+  </component>
+  <component name="VisualizationToolProject">
+    <option name="state">
+      <ProjectState>
+        <option name="scale" value="0.4" />
+      </ProjectState>
+    </option>
   </component>
 </project>

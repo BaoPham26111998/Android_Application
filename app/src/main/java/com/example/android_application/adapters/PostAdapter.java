@@ -1,32 +1,56 @@
 package com.example.android_application.adapters;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.android_application.activities.CommentActivity;
 import com.example.android_application.databinding.PostItemBinding;
 import com.example.android_application.models.Post;
 import com.example.android_application.ultilities.Constants;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
+import com.example.android_application.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
+
+//    private Context mContext;
     private final List<Post> postList;
+    private FirebaseUser firebaseUser;
     public PostAdapter(List<Post> postList) {
         this.postList = postList;
     }
+
+
+//    public PostAdapter(Context mContext, List<Post> postList) {
+//        this.mContext = mContext;
+//        this.postList = postList;
+//        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+//    }
+
 
     @NonNull
     @Override
@@ -34,13 +58,44 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         PostItemBinding postItemBinding = PostItemBinding.inflate(
                 LayoutInflater.from(parent.getContext())
         );
+
         return new PostViewHolder(postItemBinding);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull PostAdapter.PostViewHolder holder, int position) {
-        holder.SetPostData(postList.get(position));
+    public void onBindViewHolder(@NonNull final PostViewHolder holder, int position) {
+
+        //holder.SetPostData(postList.get(position));
+        final Post post = postList.get(position);
+        holder.SetPostData(post);
+
+
+        getComments(post.getPostId(), holder.binding.noOfComments);
+
+        holder.itemView.findViewById(R.id.comment).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                    Intent intent = new Intent(v.getContext() , CommentActivity.class);
+                    intent.putExtra("postId", post.getPostId());
+                    //  intent.putExtra("authorId", );
+                    v.getContext().startActivity(intent);
+                }
+        });
+
+
+        holder.itemView.findViewById(R.id.no_of_comments).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), CommentActivity.class);
+                intent.putExtra("postId", post.getPostId());
+//                intent.putExtra("authorId", post.getPublisher());
+                v.getContext().startActivity(intent);
+            }
+        });
+
+
     }
+
 
     @Override
     public int getItemCount() {
@@ -107,6 +162,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             });
 
 
+
         }
 
         void liked(Post post){
@@ -138,5 +194,27 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                     });
 
         }
+
+
+    }
+
+    private void getComments (String postId, final TextView text) {
+        FirebaseFirestore database = FirebaseFirestore.getInstance();
+        database.getInstance().collection(Constants.COLLECTION_POST)
+                .whereEqualTo(Constants.POST_ID, postId).addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                        text.setText("View All " + value.getDocuments().size() + " Comments");
+                    }
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                text.setText("View All " + dataSnapshot.getChildrenCount() + " Comments");
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+    });
     }
 }

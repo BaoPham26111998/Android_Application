@@ -24,6 +24,9 @@
             android:name=".activities.CreatePost"
             android:exported="false" />
         <activity
+            android:name=".activities.CommentActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.AccountProfileActivity"
             android:exported="false" /> <!-- <activity -->
         <!-- android:name=".activities.Profile" -->
