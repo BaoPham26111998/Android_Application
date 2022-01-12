@@ -115,6 +115,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                 postListener.onLikedCountClicked(post);
             });
 
+            binding.feedsCommentCount.setOnClickListener(v -> {
+                postListener.   onCommnentClicked(post);
+            });
+
 
         }
 

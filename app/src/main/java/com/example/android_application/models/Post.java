@@ -18,4 +18,5 @@ public class Post implements Serializable {
     public String likeCount;
     public String userId;
     public ArrayList<String> userIdList;
+    public ArrayList<Object> userCommentList;
 }

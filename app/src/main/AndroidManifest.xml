@@ -17,6 +17,9 @@
         android:theme="@style/Theme.Android_application"
         tools:replace="android:label">
         <activity
+            android:name=".activities.PostCommentList"
+            android:exported="false" />
+        <activity
             android:name=".activities.AccountPostLikedList"
             android:exported="false" />
         <activity

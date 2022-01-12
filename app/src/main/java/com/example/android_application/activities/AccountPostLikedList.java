@@ -43,6 +43,7 @@ public class AccountPostLikedList extends AppCompatActivity implements ChatUserL
         System.out.println(userIdLikeList);
         FirebaseFirestore database = FirebaseFirestore.getInstance();
         List<User> users = new ArrayList<>();
+
         for (int i = 0; i<userIdLikeList.size(); i++){
 
             String userID = userIdLikeList.get(i);
