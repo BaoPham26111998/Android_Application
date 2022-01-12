@@ -43,6 +43,7 @@ public class Constants {
     public static final String POST_LIKE = "postLike";
     public static final String POST_COMMENT = "postComment";
     public static final String POST_USER_LIKE = "userLiked";
+    public static final String POST_USER_COMMENT = "comments";
 
 
     //Videos Info
