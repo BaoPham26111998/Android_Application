@@ -136,38 +136,6 @@ public class PhotoEditingActivity extends AppCompatActivity {
                 saveTextButton.setVisibility(View.VISIBLE);
 
                 String inputText = textEdit.getText().toString();
-
-                mPhotoEditor.setOnPhotoEditorListener(new OnPhotoEditorListener() {
-                    @Override
-                    public void onEditTextChangeListener(View rootView, String text, int colorCode) {
-                        mPhotoEditor.editText(rootView, inputText, colorCode);
-                    }
-
-                    @Override
-                    public void onAddViewListener(ViewType viewType, int numberOfAddedViews) {
-
-                    }
-
-                    @Override
-                    public void onRemoveViewListener(ViewType viewType, int numberOfAddedViews) {
-
-                    }
-
-                    @Override
-                    public void onStartViewChangeListener(ViewType viewType) {
-
-                    }
-
-                    @Override
-                    public void onStopViewChangeListener(ViewType viewType) {
-
-                    }
-
-                    @Override
-                    public void onTouchSourceImage(MotionEvent event) {
-
-                    }
-                });
 //                mPhotoEditor.addText(textEdit.toString(), R.color.text1_color);
                 textButton.setEnabled(false);
                 filterButton.setEnabled(true);
