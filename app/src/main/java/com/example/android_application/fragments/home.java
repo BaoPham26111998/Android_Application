@@ -17,8 +17,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.android_application.R;
+import com.example.android_application.activities.AccountPostLikedList;
 import com.example.android_application.activities.AccountProfileActivity;
 import com.example.android_application.activities.PostAccountProfileActivity;
+import com.example.android_application.activities.PostCommentList;
 import com.example.android_application.adapters.PostAdapter;
 import com.example.android_application.adapters.StoryAdapter;
 import com.example.android_application.databinding.FragmentHomeBinding;
@@ -43,6 +45,8 @@ public class home extends Fragment implements PostListener {
     PreferenceManager preferenceManager;
     private PostAdapter postAdapter;
     List<Post> posts = new ArrayList<>();
+    ArrayList<String> userIdList = new ArrayList<>();
+    ArrayList<Object> userCommentList = new ArrayList<>();
     private FragmentHomeBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -122,16 +126,17 @@ public class home extends Fragment implements PostListener {
                                 post.description = documentChange.getDocument().getString(Constants.POST_DESCRIPTION);
                                 post.postId = documentChange.getDocument().getId();
                                 post.userId = documentChange.getDocument().getString(Constants.USER_ID);
-                                List<String> userList = (List<String>) documentChange.getDocument().get(Constants.POST_USER_LIKE);
-                                Integer likeLength = userList.size();
+                                post.userIdList = (ArrayList<String>) documentChange.getDocument().get(Constants.POST_USER_LIKE);
+                                post.userCommentList = (ArrayList<Object>) documentChange.getDocument().get(Constants.POST_USER_COMMENT);
+                                Integer likeLength = userIdList.size();
                                 post.likeCount = likeLength.toString() +" likes";
                                 post.comment = documentChange.getDocument().getDouble(Constants.POST_COMMENT).intValue() + " comments";
                                 posts.add(post);
                             }
                             //When post was update or change
                             if (documentChange.getType() == DocumentChange.Type.MODIFIED){
-                                List<String> userList = (List<String>) documentChange.getDocument().get(Constants.POST_USER_LIKE);
-                                Integer likeLength = userList.size();
+                                List<String> userIdList = (List<String>) documentChange.getDocument().get(Constants.POST_USER_LIKE);
+                                Integer likeLength = userIdList.size();
                                 String imageString = documentChange.getDocument().getString(Constants.IMAGE);
                                 System.out.println(posts.size());
                                 for(int i=0; i<posts.size();i++){
@@ -158,8 +163,6 @@ public class home extends Fragment implements PostListener {
 
             postAdapter = new PostAdapter(posts, this);
             postRecycler.setAdapter(postAdapter);
-
-
     }
 
     @Override
@@ -180,4 +183,20 @@ public class home extends Fragment implements PostListener {
         }
 
     }
+
+    @Override
+    public void onLikedCountClicked(Post post) {
+        System.out.println(post.userIdList.size());
+        Intent intent = new Intent(getActivity(), AccountPostLikedList.class)
+                .putExtra(Constants.POST_USER_LIKE,post.userIdList );
+        startActivity(intent);
+    }
+
+    @Override
+    public void onCommnentClicked(Post post) {
+        Intent intent = new Intent(getActivity(), PostCommentList.class)
+                .putExtra(Constants.POST_IMAGE_ID,post.postId);
+        startActivity(intent);
+    }
+
 }

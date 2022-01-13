@@ -25,6 +25,7 @@ import java.util.List;
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
     private final List<Post> postList;
     private final PostListener postListener;
+
     public PostAdapter(List<Post> postList, PostListener postListener) {
         this.postList = postList;
         this.postListener = postListener;
@@ -108,6 +109,14 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                 liked(post);
                 binding.feedsPostLike.setVisibility(View.GONE);
                 binding.feedsPostLiked.setVisibility(View.VISIBLE);
+            });
+
+            binding.feedsLikesCount.setOnClickListener(v-> {
+                postListener.onLikedCountClicked(post);
+            });
+
+            binding.feedsCommentCount.setOnClickListener(v -> {
+                postListener.   onCommnentClicked(post);
             });
 
 

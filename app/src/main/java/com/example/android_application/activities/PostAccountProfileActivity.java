@@ -68,8 +68,16 @@ public class PostAccountProfileActivity extends AppCompatActivity {
                         .putExtra(Constants.POST_IMAGE_ID,postId));
             }
         });
-        binding.followButton.setOnClickListener(v -> follow());
-        binding.unfollowButton.setOnClickListener(v -> unfollow());
+
+        binding.FragmentProfileFollowingLinearLayout.setOnClickListener(v -> startActivity(
+                new Intent(getApplicationContext(), AccountFollowingList.class)
+                        .putExtra(Constants.USER_ID,userId))
+        );
+        binding.FragmentProfileFollowerLinearLayout.setOnClickListener(v -> startActivity(
+                new Intent(getApplicationContext(), AccountFollowerList.class)
+                        .putExtra(Constants.USER_ID,userId)
+        ));
+
 
     }
 
@@ -79,37 +87,32 @@ public class PostAccountProfileActivity extends AppCompatActivity {
                 .addSnapshotListener(new EventListener<DocumentSnapshot>() {
                     @Override
                     public void onEvent(@Nullable DocumentSnapshot snapshot, @Nullable FirebaseFirestoreException error) {
-                        List<String> followerList = (List<String>) snapshot.get("userFollowed");
-                        Integer followLength = followerList.size();
-                        binding.txtFollowers.setText(followLength.toString());
-                        System.out.println("Listen on change of user Id: " + userId);
-                        if (followerList.contains(userId)){
-                            binding.followButton.setVisibility(View.GONE);
-                            binding.unfollowButton.setVisibility(View.VISIBLE);
-                        }else{
-                            binding.followButton.setVisibility(View.VISIBLE);
-                            binding.unfollowButton.setVisibility(View.GONE);
+                        binding.followButton.setOnClickListener(v -> follow());
+                        binding.unfollowButton.setOnClickListener(v -> unfollow());
+
+                        if(snapshot.exists()){
+                            List<String> followerList = (List<String>) snapshot.get("userFollowed");
+                            List<String> followingList = (List<String>) snapshot.get(Constants.USER_FOLLOWING);
+                            Integer followerLength = followingList.size();
+                            Integer followLength = followerList.size();
+                            binding.txtFollowers.setText(followLength.toString());
+                            binding.txtFollowing.setText(followerLength.toString());
+                            System.out.println("Listen on change of user Id: " + userId);
+                            System.out.println(followerList.toString());
+                            if (followerList.contains(preferenceManager.getString(Constants.USER_ID))){
+                                System.out.println(true);
+                                binding.followButton.setVisibility(View.GONE);
+                                binding.unfollowButton.setVisibility(View.VISIBLE);
+                            }else{
+                                System.out.println(false);
+                                binding.followButton.setVisibility(View.VISIBLE);
+                                binding.unfollowButton.setVisibility(View.GONE);
+                            }
                         }
+
                     }
                 });
-//                .get()
-//                .addOnCompleteListener(task -> {
-//                    if (task.isSuccessful() && task.getResult() != null){
-//                        DocumentSnapshot documentSnapshot = task.getResult();
-//                        List<String> followerList = (List<String>) documentSnapshot.get("userFollowed");
-//                        Integer followLength = followerList.size();
-//                        System.out.println("Hello follow list lenght: " + followLength.toString());
-//                        binding.txtFollowers.setText(followLength.toString());
-//                        if (followerList.contains(userId)){
-//                            binding.followButton.setVisibility(View.GONE);
-//                            binding.unfollowButton.setVisibility(View.VISIBLE);
-//                        }else {
-//                            binding.followButton.setVisibility(View.VISIBLE);
-//                            binding.unfollowButton.setVisibility(View.GONE);
-//                        }
-//
-//                    }
-//                });
+
     }
 
     private void loadUserInfo(){
