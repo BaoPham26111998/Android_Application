@@ -82,3 +82,4 @@ dependencies {
 
     implementation 'com.burhanrashid52:photoeditor:1.5.1'
 
+}
