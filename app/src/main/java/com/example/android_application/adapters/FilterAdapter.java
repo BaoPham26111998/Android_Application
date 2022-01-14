@@ -1,11 +1,14 @@
 package com.example.android_application.adapters;
 
 import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,6 +18,7 @@ import com.example.android_application.R;
 import java.util.ArrayList;
 
 import ja.burhanrashid52.photoeditor.PhotoEditor;
+import ja.burhanrashid52.photoeditor.PhotoEditorView;
 import ja.burhanrashid52.photoeditor.PhotoFilter;
 
 public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.HolderView> {
@@ -33,7 +37,7 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.HolderView
 
     @NonNull
     @Override
-    public HolderView onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public FilterAdapter.HolderView onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.row_filters, parent, false);
 

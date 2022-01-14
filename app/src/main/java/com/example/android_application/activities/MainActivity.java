@@ -27,19 +27,15 @@ import com.example.android_application.databinding.ActivityMainBinding;
 import com.example.android_application.models.Video;
 import com.example.android_application.ultilities.Constants;
 import com.example.android_application.ultilities.PreferenceManager;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -50,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     FirebaseFirestore db;
     private AdapterVideo adapterVideo;
     private RecyclerView recyclerView;
+    private FloatingActionButton videoFab;
 
 
     private BottomNavigationView bottomNavigationView;
@@ -76,6 +73,13 @@ public class MainActivity extends AppCompatActivity {
         preferenceManager = new PreferenceManager(getApplicationContext());
         setContentView(binding.getRoot());
 
+//        videoFab = findViewById(R.id.fabNewVideo);
+//        videoFab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                startActivity(new Intent(MainActivity.this, AddVideoActivity.class));
+//            }
+//        });
 
 //        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
 //                R.id.navigation_home,
@@ -97,6 +101,8 @@ public class MainActivity extends AppCompatActivity {
         binding.fabNewPost.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(),CreatePost.class)));
         binding.imageChat.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(),MainChat.class)));
         binding.imageProfile.setOnClickListener(v-> startActivity(new Intent(getApplicationContext(), AccountProfileActivity.class)));
+        binding.imageProfile.setOnClickListener( v-> startActivity(new Intent(getApplicationContext(), AccountProfileActivity.class)));
+        binding.imageVideo.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(),MainVideo.class)));
     }
 
     private void loadUserInfo() {
@@ -203,6 +209,20 @@ public class MainActivity extends AppCompatActivity {
 //
 //    }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.action_bar, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        switch (item.getItemId()){
+
+            case R.id.ac_favorits:
+                Toast.makeText(MainActivity.this, "Favorit is clicked", Toast.LENGTH_SHORT).show();
 
 //    @Override
 //    public boolean onCreateOptionsMenu(Menu menu) {

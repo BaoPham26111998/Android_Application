@@ -86,6 +86,7 @@ public class AdapterVideo extends RecyclerView.Adapter<AdapterVideo.HolderView> 
             }
         });
 
+
         holder.videoView.setOnInfoListener(new MediaPlayer.OnInfoListener() {
             @Override
             public boolean onInfo(MediaPlayer mediaPlayer, int what, int extra) {

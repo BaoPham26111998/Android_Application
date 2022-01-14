@@ -27,6 +27,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class SignUpActivity extends AppCompatActivity {
@@ -86,6 +87,10 @@ public class SignUpActivity extends AppCompatActivity {
                         String userId = mAuth.getCurrentUser().getUid();
                         DocumentReference documentReference = database.collection(Constants.COLLECTION_USERS).document(userId);
                         HashMap<String, Object> user = new HashMap<>();
+                        ArrayList userFollowed = new ArrayList();
+                        ArrayList followingUser = new ArrayList();
+                        user.put("userFollowed", userFollowed);
+                        user.put("followingUser",followingUser);
                         user.put(Constants.NAME,binding.inputName.getText().toString());
                         user.put(Constants.EMAIL,binding.inputEmail.getText().toString());
                         user.put(Constants.IMAGE,encodedImage);
