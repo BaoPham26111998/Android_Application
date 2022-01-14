@@ -76,10 +76,10 @@ public class AddVideoActivity extends AppCompatActivity {
         userId = intent.getStringExtra("userId");
 
         db = FirebaseFirestore.getInstance();
-        actionBar = getSupportActionBar();
-        actionBar.setDisplayShowHomeEnabled(true);
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setTitle("Add New Video");
+//        actionBar = getSupportActionBar();
+//        actionBar.setDisplayShowHomeEnabled(true);
+//        actionBar.setDisplayHomeAsUpEnabled(true);
+//        actionBar.setTitle("Add New Video");
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("Please Wait");

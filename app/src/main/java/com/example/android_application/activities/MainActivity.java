@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -30,6 +31,7 @@ import com.example.android_application.ultilities.PreferenceManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -50,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     FirebaseFirestore db;
     private AdapterVideo adapterVideo;
     private RecyclerView recyclerView;
+    private FloatingActionButton videoFab;
 
 
     private BottomNavigationView bottomNavigationView;
@@ -76,6 +79,13 @@ public class MainActivity extends AppCompatActivity {
         preferenceManager = new PreferenceManager(getApplicationContext());
         setContentView(binding.getRoot());
 
+        videoFab = findViewById(R.id.fabNewVideo);
+        videoFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, AddVideoActivity.class));
+            }
+        });
 
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_home,

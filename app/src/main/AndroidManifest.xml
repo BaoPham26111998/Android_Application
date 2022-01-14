@@ -24,6 +24,12 @@
             android:name=".activities.AccountPostLikedList"
             android:exported="false" />
         <activity
+            android:name=".activities.PhotoEditingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.AddVideoActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.AccountFollowerList"
             android:exported="false" />
         <activity
