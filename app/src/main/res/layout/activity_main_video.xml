@@ -10,7 +10,7 @@
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
     android:background="@color/main_color"
-    tools:context=".activities.MainActivity">
+    tools:context=".activities.MainVideo">
 
     <com.makeramen.roundedimageview.RoundedImageView
         android:id="@+id/imageProfile"
@@ -63,7 +63,7 @@
         android:layout_marginRight="@dimen/_3sdp"
         android:background="@drawable/background_icon"
         android:padding="@dimen/_6sdp"
-        android:src="@drawable/ic_video"
+        android:src="@drawable/ic_home"
         android:tint="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -129,22 +129,22 @@
     </FrameLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabNewPost"
+        android:id="@+id/fabNewVideo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/main_color"
         android:layout_marginEnd="@dimen/_15sdp"
         android:layout_marginRight="@dimen/_15sdp"
-        android:layout_marginBottom="@dimen/_15sdp"
+        android:layout_marginBottom="65dp"
         android:contentDescription="@string/app_name"
-        android:src="@drawable/ic_add"
-        android:backgroundTint="@color/main_color"
+        android:src="@drawable/ic_pick_video_library_white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:tint="@color/white"
-        />
+        app:tint="@color/white" />
 
 
 
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
