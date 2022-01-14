@@ -14,6 +14,10 @@ public class Constants {
     public static final String USER_ID = "userId";
     public static final String IMAGE= "image";
     public static final String USER = "user";
+    public static final String USER_DESCRIPTION = "userDescription";
+    public static final String USER_WEBSITE = "userWebsite";
+    public static final String USER_FOLLOWERS = "userFollowed";
+    public static final String USER_FOLLOWING = "followingUser";
 
     //Chat app preference
     public static final String PREFERENCE_NAME = "chatAppPreference";
@@ -30,11 +34,17 @@ public class Constants {
     public static final String MESSAGE = "message";
     public static final String TIMESTAMP = "timestamp";
 
+    public static final String POST = "post";
     public static final String ARRAY_POST = "arrayPost";
     public static final String POST_TITLE= "postTitle";
     public static final String POST_DESCRIPTION = "postDescription";
-    public static final String POST_IMAGE = "postImage";
+    public static final String POST_IMAGE_URL = "postImageURL";
     public static final String POST_IMAGE_ID = "postImageId";
+    public static final String POST_LIKE = "postLike";
+    public static final String POST_COMMENT = "postComment";
+    public static final String POST_USER_LIKE = "userLiked";
+    public static final String POST_USER_COMMENT = "comments";
+
 
     //Videos Info
     public static final String VIDEO_ID = "id";

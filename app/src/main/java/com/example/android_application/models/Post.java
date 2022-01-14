@@ -1,19 +1,23 @@
 package com.example.android_application.models;
 
 import android.graphics.Bitmap;
-import android.net.Uri;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class Post implements Serializable {
 
     public String name;
     public Bitmap imageProfile;
-    public Uri postImg;
+    public String postVideo;
+    public String postImg;
     public String date;
     public String title;
     public String description;
-    public String like;
     public String comment;
-
-    }
+    public String postId;
+    public String likeCount;
+    public String userId;
+    public ArrayList<String> userIdList;
+    public int userCommentList;
+}

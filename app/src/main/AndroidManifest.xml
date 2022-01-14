@@ -1,16 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.android_application">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="abc"
+        android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Android_application">
+        android:theme="@style/Theme.Android_application"
+        tools:replace="android:label">
+        <activity
+            android:name=".activities.PostCommentList"
+            android:exported="false" />
+        <activity
+            android:name=".activities.AccountPostLikedList"
+            android:exported="false" />
+        <activity
+            android:name=".activities.AccountFollowerList"
+            android:exported="false" />
+        <activity
+            android:name=".activities.AccountFollowingList"
+            android:exported="false" />
+        <activity
+            android:name=".activities.EditAccountProfile"
+            android:exported="false" />
+        <activity
+            android:name=".activities.PostAccountProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ProfileAccountPostClicked"
+            android:exported="false" />
         <activity
             android:name=".activities.ChatActivity"
             android:exported="false" />
@@ -40,7 +66,6 @@
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

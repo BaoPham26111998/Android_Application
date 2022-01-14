@@ -75,11 +75,13 @@ public class SignInActivity extends AppCompatActivity {
                             .get()
                             .addOnCompleteListener(task1 -> {
                                 if (task1.isSuccessful() && task1.getResult() != null){
+                                    loading(false);
                                     DocumentSnapshot documentSnapshot = task1.getResult();
                                     preferenceManager.putBoolean(Constants.IS_SIGNED_IN, true);
                                     preferenceManager.putString(Constants.USER_ID, documentSnapshot.getId());
                                     preferenceManager.putString(Constants.NAME, documentSnapshot.getString(Constants.NAME));
                                     preferenceManager.putString(Constants.IMAGE, documentSnapshot.getString(Constants.IMAGE));
+                                    preferenceManager.putString(Constants.EMAIL,documentSnapshot.getString(Constants.EMAIL));
                                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                     startActivity(intent);

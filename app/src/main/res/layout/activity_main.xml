@@ -111,6 +111,8 @@
             app:navGraph="@navigation/mobile_navigation" />
 
 
+
+
     </FrameLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -127,6 +129,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:tint="@color/white"
         />
+
+
 
 
 

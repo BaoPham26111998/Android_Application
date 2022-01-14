@@ -14,6 +14,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -49,11 +50,17 @@ public class MainActivity extends AppCompatActivity {
     FirebaseFirestore db;
     private AdapterVideo adapterVideo;
     private RecyclerView recyclerView;
+
+
+    private BottomNavigationView bottomNavigationView;
+    private Fragment selectorFragment;
+
     //Because view binding enabled, binding for each XML file will be generate automatically
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
 //        setContentView(R.layout.activity_main);
 //        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#dedede")));
 //
@@ -68,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         preferenceManager = new PreferenceManager(getApplicationContext());
         setContentView(binding.getRoot());
+
 
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_home,
@@ -88,15 +96,22 @@ public class MainActivity extends AppCompatActivity {
         binding.imageSignOut.setOnClickListener(v-> logOut());
         binding.fabNewPost.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(),CreatePost.class)));
         binding.imageChat.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(),MainChat.class)));
+        binding.imageProfile.setOnClickListener( v-> startActivity(new Intent(getApplicationContext(), AccountProfileActivity.class)));
     }
 
     private void loadUserInfo() {
-        //Load user name
-        binding.textName.setText(preferenceManager.getString(Constants.NAME));
-        //Load image
-        byte[] bytes = Base64.decode(preferenceManager.getString(Constants.IMAGE), Base64.DEFAULT);
-        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-        binding.imageProfile.setImageBitmap(bitmap);
+        FirebaseFirestore database = FirebaseFirestore.getInstance();
+        database.collection(Constants.COLLECTION_USERS).document(preferenceManager.getString(Constants.USER_ID))
+                .get()
+                .addOnCompleteListener(task -> {
+                    binding.textName.setText(task.getResult().getString(Constants.NAME));
+                    //Load imageimage
+                    String imageString = task.getResult().getString(Constants.IMAGE);
+                    byte[] bytes = Base64.decode(task.getResult().getString(Constants.IMAGE), Base64.DEFAULT);
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    binding.imageProfile.setImageBitmap(bitmap);
+
+                });
     }
 
     // Set up the application notification for UI
