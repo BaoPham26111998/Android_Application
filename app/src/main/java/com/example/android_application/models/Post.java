@@ -9,6 +9,7 @@ public class Post implements Serializable {
 
     public String name;
     public Bitmap imageProfile;
+    public String postVideo;
     public String postImg;
     public String date;
     public String title;
@@ -18,5 +19,5 @@ public class Post implements Serializable {
     public String likeCount;
     public String userId;
     public ArrayList<String> userIdList;
-    public ArrayList<Object> userCommentList;
+    public int userCommentList;
 }

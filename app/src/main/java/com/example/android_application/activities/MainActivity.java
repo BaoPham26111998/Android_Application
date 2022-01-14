@@ -14,6 +14,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -50,11 +51,16 @@ public class MainActivity extends AppCompatActivity {
     private AdapterVideo adapterVideo;
     private RecyclerView recyclerView;
 
+
+    private BottomNavigationView bottomNavigationView;
+    private Fragment selectorFragment;
+
     //Because view binding enabled, binding for each XML file will be generate automatically
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
 //        setContentView(R.layout.activity_main);
 //        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#dedede")));
 //
