@@ -27,26 +27,14 @@
         android:id="@+id/filterButton"
         android:layout_width="wrap_content"
 
-        android:layout_marginTop="20dp"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
+        android:layout_marginTop="20dp"
         android:text="Filter"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/brushMode"
         app:layout_constraintTop_toBottomOf="@+id/photoEditorView"></Button>
-
-    <Button
-        android:id="@+id/textButton"
-        android:layout_width="wrap_content"
-
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:text="Text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/filterButton"
-        app:layout_constraintTop_toTopOf="@+id/filterButton"></Button>
 
     <Button
         android:id="@+id/exitButton"

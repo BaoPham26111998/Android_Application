@@ -41,7 +41,7 @@ import ja.burhanrashid52.photoeditor.ViewType;
 
 public class PhotoEditingActivity extends AppCompatActivity {
     PhotoEditorView mPhotoEditorView;
-    Button brushModeButton, undoButton, filterButton, textButton, exitButton, saveButton, saveTextButton;
+    Button brushModeButton, undoButton, filterButton, exitButton, saveButton;
     PhotoEditor mPhotoEditor;
     RangeSlider brushSizeRs, brushOpacityRs;
     FilterAdapter filterAdapter;
@@ -65,16 +65,12 @@ public class PhotoEditingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
 
-        Typeface typeface = getResources().getFont(R.font.roboto);
-
         mPhotoEditorView = findViewById(R.id.photoEditorView);
         brushModeButton = findViewById(R.id.brushMode);
         filterButton = findViewById(R.id.filterButton);
         undoButton = findViewById(R.id.undoButton);
-        textButton = findViewById(R.id.textButton);
         exitButton = findViewById(R.id.exitButton);
         saveButton = findViewById(R.id.saveButton);
-        saveTextButton = findViewById(R.id.saveButtonText);
 
         textEdit = findViewById(R.id.textAddition);
         rv = findViewById(R.id.filterRv);
@@ -98,7 +94,6 @@ public class PhotoEditingActivity extends AppCompatActivity {
 
         mPhotoEditor = new PhotoEditor.Builder(this, mPhotoEditorView)
                 .setPinchTextScalable(true)
-                .setDefaultTextTypeface(typeface)
                 .setClipSourceImage(true)
                 .build();
         setListener();
@@ -128,60 +123,6 @@ public class PhotoEditingActivity extends AppCompatActivity {
             }
         });
 
-        textButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                textEdit.setVisibility(View.VISIBLE);
-                textEdit.setHint("Your Text Here...");
-                saveTextButton.setVisibility(View.VISIBLE);
-
-                String inputText = textEdit.getText().toString();
-
-                mPhotoEditor.setOnPhotoEditorListener(new OnPhotoEditorListener() {
-                    @Override
-                    public void onEditTextChangeListener(View rootView, String text, int colorCode) {
-                        mPhotoEditor.editText(rootView, inputText, colorCode);
-                    }
-
-                    @Override
-                    public void onAddViewListener(ViewType viewType, int numberOfAddedViews) {
-
-                    }
-
-                    @Override
-                    public void onRemoveViewListener(ViewType viewType, int numberOfAddedViews) {
-
-                    }
-
-                    @Override
-                    public void onStartViewChangeListener(ViewType viewType) {
-
-                    }
-
-                    @Override
-                    public void onStopViewChangeListener(ViewType viewType) {
-
-                    }
-
-                    @Override
-                    public void onTouchSourceImage(MotionEvent event) {
-
-                    }
-                });
-//                mPhotoEditor.addText(textEdit.toString(), R.color.text1_color);
-                textButton.setEnabled(false);
-                filterButton.setEnabled(true);
-                brushModeButton.setEnabled(true);
-            }
-        });
-
-        saveTextButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mPhotoEditor.addText(textEdit.getText().toString(), R.color.black);
-            }
-        });
-
         brushModeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -190,7 +131,6 @@ public class PhotoEditingActivity extends AppCompatActivity {
 
                 brushModeButton.setEnabled(false);
                 filterButton.setEnabled(true);
-                textButton.setEnabled(true);
 
                 clearFilterList();
                 rv.setVisibility(View.GONE);
@@ -225,7 +165,6 @@ public class PhotoEditingActivity extends AppCompatActivity {
                 filterButton.setEnabled(false);
                 brushOptionsLayout.setVisibility(View.GONE);
                 brushModeButton.setEnabled(true);
-                textButton.setEnabled(true);
             }
         });
 
@@ -240,7 +179,6 @@ public class PhotoEditingActivity extends AppCompatActivity {
                 // Brush
                 brushOptionsLayout.setVisibility(View.GONE);
                 brushModeButton.setEnabled(true);
-                textButton.setEnabled(true);
                 mPhotoEditor.setBrushDrawingMode(false);
             }
         });
