@@ -36,6 +36,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 
@@ -119,6 +120,7 @@ public class home extends Fragment implements PostListener {
                                 Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                                 Post post = new Post();
                                 post.postImg = documentChange.getDocument().getString(Constants.POST_IMAGE_URL);
+                                post.postVideo = documentChange.getDocument().getString("postVideoUrl");
                                 post.date = documentChange.getDocument().getDate(Constants.TIMESTAMP).toString();
                                 post.name = documentChange.getDocument().getString(Constants.NAME);
                                 post.imageProfile = bitmap;
@@ -127,15 +129,16 @@ public class home extends Fragment implements PostListener {
                                 post.postId = documentChange.getDocument().getId();
                                 post.userId = documentChange.getDocument().getString(Constants.USER_ID);
                                 post.userIdList = (ArrayList<String>) documentChange.getDocument().get(Constants.POST_USER_LIKE);
-                                post.userCommentList = (ArrayList<Object>) documentChange.getDocument().get(Constants.POST_USER_COMMENT);
+                                post.userCommentList =  documentChange.getDocument().getLong(Constants.POST_COMMENT).intValue();
                                 Integer likeLength = userIdList.size();
                                 post.likeCount = likeLength.toString() +" likes";
-                                post.comment = documentChange.getDocument().getDouble(Constants.POST_COMMENT).intValue() + " comments";
+//                                post.comment = documentChange.getDocument().co.intValue() + " comments";
                                 posts.add(post);
                             }
                             //When post was update or change
                             if (documentChange.getType() == DocumentChange.Type.MODIFIED){
                                 List<String> userIdList = (List<String>) documentChange.getDocument().get(Constants.POST_USER_LIKE);
+                                Integer commentCount = documentChange.getDocument().getLong(Constants.POST_COMMENT).intValue();
                                 Integer likeLength = userIdList.size();
                                 String imageString = documentChange.getDocument().getString(Constants.IMAGE);
                                 System.out.println(posts.size());
@@ -143,6 +146,7 @@ public class home extends Fragment implements PostListener {
                                     String postId = documentChange.getDocument().getId();
                                     if(posts.get(i).postId.equals(postId)){
                                         System.out.println(postId);
+                                        posts.get(i).comment = commentCount.toString();
                                         posts.get(i).likeCount = likeLength.toString() +" likes";
                                         byte[] bytes = Base64.decode(imageString, Base64.DEFAULT);
                                         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
@@ -156,7 +160,9 @@ public class home extends Fragment implements PostListener {
                             }
 
                         }
-                        postAdapter.notifyDataSetChanged();
+
+
+                                postAdapter.notifyDataSetChanged();
                     }
                 });
 
@@ -198,5 +204,7 @@ public class home extends Fragment implements PostListener {
                 .putExtra(Constants.POST_IMAGE_ID,post.postId);
         startActivity(intent);
     }
+
+
 
 }

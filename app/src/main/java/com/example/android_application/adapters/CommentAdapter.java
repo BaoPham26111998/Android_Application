@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.android_application.databinding.CommentContainerBinding;
+import com.example.android_application.databinding.CommentItemBinding;
 import com.example.android_application.models.Comment;
 
 import java.util.List;
@@ -26,10 +26,10 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     @NonNull
     @Override
     public CommentViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        CommentContainerBinding commentContainerBinding = CommentContainerBinding.inflate(
+        CommentItemBinding commentItemBinding = CommentItemBinding.inflate(
                 LayoutInflater.from(parent.getContext())
         );
-        return new CommentViewHolder(commentContainerBinding);
+        return new CommentViewHolder(commentItemBinding );
     }
 
     @Override
@@ -43,11 +43,11 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     }
 
     class CommentViewHolder extends RecyclerView.ViewHolder{
-        CommentContainerBinding binding;
+        CommentItemBinding binding;
 
-        CommentViewHolder(CommentContainerBinding commentContainerBinding){
-            super(commentContainerBinding.getRoot());
-            binding = commentContainerBinding;
+        CommentViewHolder(CommentItemBinding commentItemBinding){
+            super(commentItemBinding.getRoot());
+            binding = commentItemBinding;
         }
 
         void SetCommentData(Comment comment){
@@ -55,8 +55,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
             byte[] bytes = Base64.decode(comment.imageProfile, Base64.DEFAULT);
             Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
             binding.imageProfile.setImageBitmap(bitmap);
-            binding.textView22.setText(comment.name);
-            binding.textView23.setText(comment.commentString);
+            binding.username.setText(comment.name);
+            binding.comment.setText(comment.commentString);
 
         }
 
