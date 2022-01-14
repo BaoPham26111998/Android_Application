@@ -157,7 +157,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/_40sdp"
                 android:layout_marginTop="@dimen/_16sdp"
-                android:text="@string/create_post"
+                android:text="Return"
                 android:textColor="@color/white"
                 android:textSize="@dimen/_13ssp"
                 android:layout_gravity="center"

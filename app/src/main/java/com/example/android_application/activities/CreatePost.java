@@ -1,13 +1,11 @@
 package com.example.android_application.activities;
 
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.view.View;
@@ -15,8 +13,6 @@ import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,11 +32,7 @@ import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -98,6 +90,7 @@ public class CreatePost extends AppCompatActivity {
             createPost();
         });
         binding.buttonReturn.setOnClickListener(v-> onBackPressed());
+        binding.imageReturn.setOnClickListener(v -> onBackPressed());
 
         toEditImage = findViewById(R.id.toPhotoEditorButton);
         toEditImage.setOnClickListener(new View.OnClickListener() {

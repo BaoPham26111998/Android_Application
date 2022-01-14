@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         preferenceManager = new PreferenceManager(getApplicationContext());
         setContentView(binding.getRoot());
 
-        videoFab = findViewById(R.id.fabNewVideo);
+//        videoFab = findViewById(R.id.fabNewVideo);
 //        videoFab.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {

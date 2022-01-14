@@ -13,6 +13,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.MediaController;
 import android.widget.Toast;
 import android.widget.VideoView;
@@ -26,7 +27,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.android_application.R;
-import com.example.android_application.databinding.ActivityAddVideoBinding;
 import com.example.android_application.ultilities.Constants;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -35,8 +35,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -53,6 +51,7 @@ public class AddVideoActivity extends AppCompatActivity {
     VideoView videoView;
     Button uploadButton;
     FloatingActionButton pickVidFab;
+    ImageView backIcon;
 
     FirebaseFirestore db;
     FirebaseAuth mAuth;
@@ -90,6 +89,7 @@ public class AddVideoActivity extends AppCompatActivity {
         videoView = (VideoView) findViewById(R.id.videoView);
         uploadButton = (Button) findViewById(R.id.uploadButton);
         pickVidFab = (FloatingActionButton) findViewById(R.id.pickVideoTab);
+        backIcon = (ImageView) findViewById(R.id.backButton);
 
         cameraPermission = new String[]{
             Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -102,10 +102,10 @@ public class AddVideoActivity extends AppCompatActivity {
             public void onClick(View view) {
                 title = editText.getText().toString().trim();
                 if (TextUtils.isEmpty(title)){
-                    Toast.makeText(AddVideoActivity.this, "Put The Text In You Cunt", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddVideoActivity.this, "Input video", Toast.LENGTH_SHORT).show();
                 }
                 else if (videoUri==null){
-                    Toast.makeText(AddVideoActivity.this, "Put The Video In You Cunt", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddVideoActivity.this, "Input Video", Toast.LENGTH_SHORT).show();
                 }
                 else {
                     uploadToFirebase();
@@ -120,6 +120,7 @@ public class AddVideoActivity extends AppCompatActivity {
                 videoPickDialog();
             }
         });
+        backIcon.setOnClickListener(v-> onBackPressed());
     }
 
     private void uploadToFirebase(){
@@ -159,6 +160,8 @@ public class AddVideoActivity extends AppCompatActivity {
                                         @Override
                                         public void onComplete(@NonNull Task<DocumentReference> task) {
                                             Toast.makeText(AddVideoActivity.this, "Successfully added to Firestore", Toast.LENGTH_SHORT).show();
+                                            Intent intent = new Intent(getApplicationContext(),MainVideo.class);
+                                            startActivity(intent);
                                         }
                                     })
                                     .addOnFailureListener(new OnFailureListener() {
@@ -194,7 +197,7 @@ public class AddVideoActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         progressDialog.dismiss();
-                        Toast.makeText(AddVideoActivity.this, "Fuck"+e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AddVideoActivity.this, "Error: "+e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
