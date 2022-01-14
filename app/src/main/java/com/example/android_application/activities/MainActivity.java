@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -28,20 +27,15 @@ import com.example.android_application.databinding.ActivityMainBinding;
 import com.example.android_application.models.Video;
 import com.example.android_application.ultilities.Constants;
 import com.example.android_application.ultilities.PreferenceManager;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -80,12 +74,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         videoFab = findViewById(R.id.fabNewVideo);
-        videoFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, AddVideoActivity.class));
-            }
-        });
+//        videoFab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                startActivity(new Intent(MainActivity.this, AddVideoActivity.class));
+//            }
+//        });
 
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_home,
@@ -107,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
         binding.fabNewPost.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(),CreatePost.class)));
         binding.imageChat.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(),MainChat.class)));
         binding.imageProfile.setOnClickListener( v-> startActivity(new Intent(getApplicationContext(), AccountProfileActivity.class)));
+        binding.imageVideo.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(),MainVideo.class)));
     }
 
     private void loadUserInfo() {
@@ -180,37 +175,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    // TODO: Set up the recycler view before calling
-    private void loadVideosFromFirestore(){
-        videoArrayList =  new ArrayList<Video>();
-        db = FirebaseFirestore.getInstance();
 
-        db.collection("videos")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()){
-                            for (QueryDocumentSnapshot documentSnapshots : task.getResult()){
-                                Video video = new Video();
-                                Map<String, Object> videoData = documentSnapshots.getData();
-                                video.setId(videoData.get(Constants.VIDEO_ID).toString());
-                                video.setVideoUrl(videoData.get(Constants.VIDEO_URL).toString());
-                                video.setTitle(videoData.get(Constants.VIDEO_TITLE).toString());
-                                video.setTimestamp(videoData.get(Constants.VIDEO_TIMESTAMP).toString());
-                                video.setUser(videoData.get(Constants.VIDEO_CREATOR).toString());
-
-                                videoArrayList.add(video);
-                            }
-                            adapterVideo = new AdapterVideo(MainActivity.this, videoArrayList, preferenceManager.getString(Constants.NAME));
-                            recyclerView.setAdapter(adapterVideo);
-                        } else{
-                            Toast.makeText(MainActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-
-    }
 
 
     @Override
