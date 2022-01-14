@@ -28,7 +28,7 @@ import java.util.Map;
 
 public class Video extends Fragment  {
 
-    RecyclerView storyRecycl, postRecycler;
+    RecyclerView  videoRecycler;
     PreferenceManager preferenceManager;
     private PostAdapter postAdapter;
     private ArrayList<com.example.android_application.models.Video> videoArrayList;
@@ -59,9 +59,9 @@ public class Video extends Fragment  {
 
     private void loadPost(){
 
-        postRecycler = binding.videoRecycler;
-        postRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
-        postRecycler.setHasFixedSize(true);
+        videoRecycler = binding.videoRecycler;
+        videoRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
+        videoRecycler.setHasFixedSize(true);
 
         videoArrayList =  new ArrayList<com.example.android_application.models.Video>();
         db = FirebaseFirestore.getInstance();
