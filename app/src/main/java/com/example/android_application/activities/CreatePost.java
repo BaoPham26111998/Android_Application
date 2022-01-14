@@ -1,14 +1,18 @@
 package com.example.android_application.activities;
 
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Base64;
 import android.view.View;
 import android.webkit.MimeTypeMap;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -17,6 +21,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.android_application.R;
 import com.example.android_application.databinding.ActivityCreatePostBinding;
 import com.example.android_application.ultilities.Constants;
 import com.example.android_application.ultilities.PreferenceManager;
@@ -30,6 +35,12 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -39,10 +50,11 @@ public class CreatePost extends AppCompatActivity {
     private ActivityCreatePostBinding binding;
     private PreferenceManager preferenceManager;
     private Uri mImageUri;
-    private String imageUrl;
+    private String imageUrl, imageBitmap;
     private StorageReference storageReference;
     private DatabaseReference databaseReference;
     private StorageTask storageTask;
+    private Button toEditImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +67,12 @@ public class CreatePost extends AppCompatActivity {
         databaseReference = FirebaseDatabase.getInstance().getReference("post");
         loadUserInfo();
         setListeners();
+        try {
+            setPostImage();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void loadUserInfo() {
@@ -77,15 +95,19 @@ public class CreatePost extends AppCompatActivity {
 
         );
         binding.buttonCreatePost.setOnClickListener(v -> {
-            if (storageTask != null && storageTask.isInProgress()){
-                showToast("Uploading");
-            }else {
-                createPost();
-            }
-
+            createPost();
         });
         binding.buttonReturn.setOnClickListener(v-> onBackPressed());
-        binding.imageReturn.setOnClickListener(v -> onBackPressed());
+
+        toEditImage = findViewById(R.id.toPhotoEditorButton);
+        toEditImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(CreatePost.this, PhotoEditingActivity.class);
+                intent.putExtra("imageUri", mImageUri.toString());
+                startActivity(intent);
+            }
+        });
     }
 
     private void selectImage(){
@@ -105,10 +127,28 @@ public class CreatePost extends AppCompatActivity {
         }
     }
 
+    private void setPostImage () throws IOException {
+        Intent intent1 = getIntent();
+        if (intent1.getStringExtra("imageBitmap") != null){
+            imageBitmap = intent1.getStringExtra("imageBitmap");
+            byte[] bytes = Base64.decode(imageBitmap, Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+
+            mImageUri = getImageUri(bitmap);
+            binding.postImage.setImageURI(mImageUri);
+            binding.textAddImage.setVisibility(View.GONE);
+
+        }
+        else {
+            showToast("Image is empty");
+        }
+    }
+
     private String getFileExtension(Uri uri){
         ContentResolver cR = getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         return mime.getExtensionFromMimeType(cR.getType(uri));
+
     }
 
     private void createPost(){
@@ -116,26 +156,26 @@ public class CreatePost extends AppCompatActivity {
             loading(true);
             StorageReference fileReference = storageReference.child(
                     System.currentTimeMillis()+"."+getFileExtension(mImageUri));
-            storageTask = fileReference.putFile(mImageUri)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            loading(false);
-
-                            fileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    storageTask = fileReference.putFile(mImageUri)
+                            .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                 @Override
-                                public void onSuccess(Uri uri) {
-                                    imageUrl = uri.toString();
-                                    upLoadToPostCollection();
-                                }
-                            });
+                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                    loading(false);
 
-                            Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            startActivity(intent);
-                            showToast("Upload successful");
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
+                                    fileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                        @Override
+                                        public void onSuccess(Uri uri) {
+                                            imageUrl = uri.toString();
+                                            upLoadToPostCollection();
+                                        }
+                                    });
+
+                                    Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    startActivity(intent);
+                                    showToast("Upload successful");
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             loading(false);
@@ -147,27 +187,49 @@ public class CreatePost extends AppCompatActivity {
         }
     }
 
-    private void upLoadToPostCollection(){
+    public Uri getImageUri(Bitmap inImage) throws IOException {
+//        File tempDir= Environment.getExternalStorageDirectory();
+//        tempDir=new File(tempDir.getAbsolutePath()+"/.temp/");
+//        tempDir.mkdir();
+//        File tempFile = File.createTempFile("tempImg", ".jpg", tempDir);
+//        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+//        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+//        byte[] bitmapData = bytes.toByteArray();
+//
+//        //write the bytes in file
+//        FileOutputStream fos = new FileOutputStream(tempFile);
+//        fos.write(bitmapData);
+//        fos.flush();
+//        fos.close();
+//        return Uri.fromFile(tempFile);
+
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(this.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
+
+        private void upLoadToPostCollection(){
         FirebaseFirestore database2 = FirebaseFirestore.getInstance();
-        HashMap<String, Object> postArray = new HashMap<>();
-        postArray.put(Constants.POST_IMAGE_URL,imageUrl);
-        postArray.put(Constants.POST_TITLE,binding.inputTitle.getText().toString());
-        postArray.put(Constants.POST_DESCRIPTION,binding.inputDescription.getText().toString());
-        postArray.put(Constants.USER_ID,preferenceManager.getString(Constants.USER_ID));
-        postArray.put(Constants.NAME,preferenceManager.getString(Constants.NAME));
-        postArray.put(Constants.IMAGE,preferenceManager.getString(Constants.IMAGE));
-        postArray.put(Constants.POST_LIKE,0);
-        postArray.put(Constants.POST_COMMENT,0);
-        postArray.put(Constants.TIMESTAMP,new Date());
-        ArrayList<Object> arrayLike = new ArrayList<>();
-        postArray.put("userLiked", arrayLike);
+            HashMap<String, Object> postArray = new HashMap<>();
+            postArray.put(Constants.POST_IMAGE_URL,imageUrl);
+            postArray.put(Constants.POST_TITLE,binding.inputTitle.getText().toString());
+            postArray.put(Constants.POST_DESCRIPTION,binding.inputDescription.getText().toString());
+            postArray.put(Constants.USER_ID,preferenceManager.getString(Constants.USER_ID));
+            postArray.put(Constants.NAME,preferenceManager.getString(Constants.NAME));
+            postArray.put(Constants.IMAGE,preferenceManager.getString(Constants.IMAGE));
+            postArray.put(Constants.POST_LIKE,0);
+            postArray.put(Constants.POST_COMMENT,0);
+            postArray.put(Constants.TIMESTAMP,new Date());
+            ArrayList<Object> arrayLike = new ArrayList<>();
+            postArray.put("userLiked", arrayLike);
         database2.collection(Constants.COLLECTION_POST).add(postArray)
                 .addOnSuccessListener(task -> {
                     showToast("Post added to firebase");
                 }).addOnFailureListener(task ->{
-            showToast("Post add fail");
+                    showToast("Post add fail");
         });
-    }
+        }
 
     //    private void createPost(){
 //        loading(true);
@@ -200,29 +262,42 @@ public class CreatePost extends AppCompatActivity {
 //                });
 //        }
 
+    //Convert image from JPEG to Bytes by using bitmap and Android Base 64 encoder library to send to the database
+    private String encodeImage(Bitmap bitmap) {
+        //Reformat the image size to fit the avatar frame
+        int previewWidth = 150;
+        int previewHeight  = bitmap.getHeight() * previewWidth / bitmap.getWidth();
+        Bitmap previewBitmap = Bitmap.createScaledBitmap(bitmap, previewWidth,previewHeight,false);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        //Encode image from JPEG to string Bytes to add to the database
+        previewBitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
+        byte[] bytes = byteArrayOutputStream.toByteArray();
+        return Base64.encodeToString(bytes, Base64.DEFAULT);
+    }
 
     //After picked an image from device you will need to receive the result when perform the pick image action
     //The result is the image
-    private final ActivityResultLauncher<Intent> pickImage = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if(result.getResultCode() == RESULT_OK) {
-                    //When the data was found (or the image has been chosen)
-                    if(result.getData() != null){
-                        //We will set the URI of the image to grant read permission for the encodeImage function
-                        mImageUri = result.getData().getData();
-                        //Call the avatar frame to put the image in.
-                        binding.postImage.setImageURI(mImageUri);
-                        //Disable the text Add Image in the avatar frame when there are a image
-                        binding.textAddImage.setVisibility(View.GONE);
-                        //Then call the encoded image function
-                        // Throw exception when input image is fail
-                    }else {
-                        showToast("Cannot get the Image from the media file");
-                    }
-                }
-            }
-    );
+//    private final ActivityResultLauncher<Intent> pickImage = registerForActivityResult(
+//            new ActivityResultContracts.StartActivityForResult(),
+//            result -> {
+//                if(result.getResultCode() == RESULT_OK) {
+//                    //When the data was found (or the image has been chosen)
+//                    if(result.getData() != null){
+//                        //We will set the URI of the image to grant read permission for the encodeImage function
+//                        mImageUri = result.getData().getData();
+//                            //Call the avatar frame to put the image in.
+//                            binding.postImage.setImageBitmap(bitmap);
+//                            //Disable the text Add Image in the avatar frame when there are a image
+//                            binding.textAddImage.setVisibility(View.GONE);
+//                            //Then call the encoded image function
+//                            encodedImage = encodeImage(bitmap);
+//                            // Throw exception when input image is fail
+//                    }else {
+//                        showToast("Cannot get the Image from the media file");
+//                    }
+//                }
+//            }
+//    );
 
     // Set up the application notification for UI
     private void showToast(String message) {

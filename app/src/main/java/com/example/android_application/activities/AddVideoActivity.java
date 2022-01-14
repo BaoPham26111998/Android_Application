@@ -64,13 +64,16 @@ public class AddVideoActivity extends AppCompatActivity {
     public static int CAMERA_REQUEST_CODE = 102;
 
     private String[] cameraPermission;
-
+    private String userId;
     private Uri videoUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_video);
+
+        Intent intent = getIntent();
+        userId = intent.getStringExtra("userId");
 
         db = FirebaseFirestore.getInstance();
         actionBar = getSupportActionBar();
@@ -142,6 +145,7 @@ public class AddVideoActivity extends AppCompatActivity {
                             //receive video uploaded url
 
                             HashMap<String, Object> hashMap = new HashMap<>();
+                            hashMap.put(Constants.VIDEO_CREATOR, "" + userId);
                             hashMap.put(Constants.VIDEO_ID, "" + timestamp + Double.toString(Math.random()*100));
                             hashMap.put(Constants.VIDEO_TITLE, "" + title);
                             hashMap.put(Constants.VIDEO_TIMESTAMP, "" + timestamp);
