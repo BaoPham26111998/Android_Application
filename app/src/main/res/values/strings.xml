@@ -1,6 +1,6 @@
 <!--String auto generate after declared during develop the application-->
 <resources>
-    <string name="app_name">ChattingApp</string>
+    <string name="app_name">SocialApp</string>
     <string name="welcome_back">Welcome Back!</string>
     <string name="login">Login</string>
     <string name="login_in_to_continue">login in to continue</string>

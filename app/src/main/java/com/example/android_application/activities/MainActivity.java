@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
 //        getSupportActionBar().setDisplayUseLogoEnabled(true);
 //        getSupportActionBar().setDisplayShowHomeEnabled(true);
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        BottomNavigationView navView = findViewById(R.id.nav_view);
+//        BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
 
@@ -81,16 +81,16 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        });
 
-        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_home,
-                R.id.navigation_dashboard,
-                R.id.navigation_notifications,
-                R.id.navigation_market,
-                R.id.navigation_profile
-        ).build();
+//        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
+//                R.id.navigation_home,
+//                R.id.navigation_dashboard,
+//                R.id.navigation_notifications,
+//                R.id.navigation_market,
+//                R.id.navigation_profile
+//        ).build();
+//
+//        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        NavigationUI.setupWithNavController(binding.navView, navController);
         loadUserInfo();
         getToken();
         setlisteners();
@@ -100,12 +100,14 @@ public class MainActivity extends AppCompatActivity {
         binding.imageSignOut.setOnClickListener(v-> logOut());
         binding.fabNewPost.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(),CreatePost.class)));
         binding.imageChat.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(),MainChat.class)));
+        binding.imageProfile.setOnClickListener(v-> startActivity(new Intent(getApplicationContext(), AccountProfileActivity.class)));
         binding.imageProfile.setOnClickListener( v-> startActivity(new Intent(getApplicationContext(), AccountProfileActivity.class)));
         binding.imageVideo.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(),MainVideo.class)));
     }
 
     private void loadUserInfo() {
         FirebaseFirestore database = FirebaseFirestore.getInstance();
+        System.out.println(preferenceManager.getString(Constants.USER_ID));
         database.collection(Constants.COLLECTION_USERS).document(preferenceManager.getString(Constants.USER_ID))
                 .get()
                 .addOnCompleteListener(task -> {
@@ -162,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
                         documentReference.update(updates)
                                 .addOnSuccessListener(unused -> {
                                     preferenceManager.clear();
-                                    startActivity(new Intent(getApplicationContext(), SignInActivity.class));
+                                    startActivity(new Intent(getApplicationContext(), StartActivity.class));
                                     finish();
                                 })
                                 .addOnFailureListener(e -> showToast("Unable to logout please try again later!"));
@@ -175,8 +177,37 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
-
+//    // TODO: Set up the recycler view before calling
+//    private void loadVideosFromFirestore(){
+//        videoArrayList =  new ArrayList<Video>();
+//        db = FirebaseFirestore.getInstance();
+//
+//        db.collection("videos")
+//                .get()
+//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                        if (task.isSuccessful()){
+//                            for (QueryDocumentSnapshot documentSnapshots : task.getResult()){
+//                                Video video = new Video();
+//                                Map<String, Object> videoData = documentSnapshots.getData();
+//                                video.setId(videoData.get(Constants.VIDEO_ID).toString());
+//                                video.setVideoUrl(videoData.get(Constants.VIDEO_URL).toString());
+//                                video.setTitle(videoData.get(Constants.VIDEO_TITLE).toString());
+//                                video.setTimestamp(videoData.get(Constants.VIDEO_TIMESTAMP).toString());
+//                                video.setUser(videoData.get(Constants.VIDEO_CREATOR).toString());
+//
+//                                videoArrayList.add(video);
+//                            }
+//                            adapterVideo = new AdapterVideo(MainActivity.this, videoArrayList, preferenceManager.getString(Constants.NAME));
+//                            recyclerView.setAdapter(adapterVideo);
+//                        } else{
+//                            Toast.makeText(MainActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
+//                        }
+//                    }
+//                });
+//
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -193,12 +224,27 @@ public class MainActivity extends AppCompatActivity {
             case R.id.ac_favorits:
                 Toast.makeText(MainActivity.this, "Favorit is clicked", Toast.LENGTH_SHORT).show();
 
-            case R.id.ac_messanger:
-                Toast.makeText(MainActivity.this, "Messanger is clicked", Toast.LENGTH_SHORT).show();
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//
+//        getMenuInflater().inflate(R.menu.action_bar, menu);
+//        return true;
+//    }
 
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-
-    }
+//    @Override
+//    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+//
+//        switch (item.getItemId()){
+//
+//            case R.id.ac_favorits:
+//                Toast.makeText(MainActivity.this, "Favorit is clicked", Toast.LENGTH_SHORT).show();
+//
+//            case R.id.ac_messanger:
+//                Toast.makeText(MainActivity.this, "Messanger is clicked", Toast.LENGTH_SHORT).show();
+//
+//            default:
+//                return super.onOptionsItemSelected(item);
+//        }
+//
+//    }
 }

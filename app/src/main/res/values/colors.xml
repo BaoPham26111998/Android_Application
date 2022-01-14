@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--Set up main colors for the application-->
 <resources>
-    <color name="main_color">#b38cff</color>
-    <color name="main_darker_color">#7151c0</color>
+    <color name="main_color">#91775E</color>
+    <color name="main_darker_color">#5E442C</color>
     <color name="text1_color">#212121</color>
     <color name="text2_color">#757575</color>
     <color name="input_color">#ECECEC</color>
