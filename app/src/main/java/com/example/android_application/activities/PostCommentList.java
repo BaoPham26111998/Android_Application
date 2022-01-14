@@ -20,6 +20,7 @@ import com.example.android_application.adapters.CommentAdapter;
 import com.example.android_application.adapters.PostAdapter;
 import com.example.android_application.databinding.ActivityPostCommentListBinding;
 import com.example.android_application.models.Comment;
+import com.example.android_application.models.Post;
 import com.example.android_application.ultilities.Constants;
 import com.example.android_application.ultilities.PreferenceManager;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -43,6 +44,7 @@ public class PostCommentList extends AppCompatActivity  {
     PreferenceManager preferenceManager;
     List<Comment> commentList = new ArrayList<>();
     CommentAdapter commentAdapter;
+    boolean added = false;
 
     String postId;
     @Override
@@ -73,7 +75,7 @@ public class PostCommentList extends AppCompatActivity  {
 
         getCurrentUserInfo();
         setCommentList();
-
+        updateCommentCount();
     }
 
     private void getCurrentUserInfo(){
@@ -93,6 +95,7 @@ public class PostCommentList extends AppCompatActivity  {
     private void setCommentList() {
 
         FirebaseFirestore database = FirebaseFirestore.getInstance();
+
         database.collection(Constants.COLLECTION_POST)
                 .document(postId)
                 .collection("comments").addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -105,6 +108,7 @@ public class PostCommentList extends AppCompatActivity  {
 
                 for(DocumentChange documentChange : value.getDocumentChanges()) {
                     //When new comment was add
+
                     if(documentChange.getType() == DocumentChange.Type.ADDED) {
                         Comment comment = new Comment();
                         comment.name = documentChange.getDocument().getString(Constants.NAME);
@@ -112,14 +116,17 @@ public class PostCommentList extends AppCompatActivity  {
                         comment.userId = documentChange.getDocument().getString("userId");
                         comment.imageProfile = documentChange.getDocument().getString("image");;
                         commentList.add(comment);
+                        added = true;
                     }
                     }
+
                 commentAdapter.notifyDataSetChanged();
             }
         });
 
         commentAdapter = new CommentAdapter(commentList);
         binding.commentRecycleView.setAdapter(commentAdapter);
+
 //                //.addOnSnaListener(new OnCompleteListener<QuerySnapshot>() {
 //                    @Override
 //                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -159,6 +166,7 @@ public class PostCommentList extends AppCompatActivity  {
 
         FirebaseFirestore database = FirebaseFirestore.getInstance();
 
+
         map.put("comment", binding.addComment.getText().toString());
         map.put("userId", preferenceManager.getString(Constants.USER_ID));
         map.put("name", preferenceManager.getString(Constants.NAME));
@@ -179,6 +187,28 @@ public class PostCommentList extends AppCompatActivity  {
     // Set up the application notification for UI
     private void showToast(String message) {
         Toast.makeText(getApplicationContext(),message, Toast.LENGTH_SHORT).show();
+    }
+
+    private void updateCommentCount() {
+        FirebaseFirestore database = FirebaseFirestore.getInstance();
+        database.collection(Constants.COLLECTION_POST)
+                .document(postId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    int postCommentsCount = task.getResult().getLong(Constants.POST_COMMENT).intValue();
+                    if (added != false) {
+                        database.collection(Constants.COLLECTION_POST).document(postId).update(Constants.POST_COMMENT, postCommentsCount + 1);
+                        added = false;
+                    }
+                }  else {
+
+                    return;
+                }
+
+            }
+        });
+
     }
 
 }
